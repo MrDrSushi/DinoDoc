@@ -294,7 +294,7 @@
             this.MenuHelp});
             this.menuStrip.Location = new System.Drawing.Point(3, 3);
             this.menuStrip.Name = "menuStrip";
-            this.menuStrip.Size = new System.Drawing.Size(229, 24);
+            this.menuStrip.Size = new System.Drawing.Size(137, 24);
             this.menuStrip.TabIndex = 1;
             this.menuStrip.Text = "menuStrip1";
             // 
@@ -412,7 +412,7 @@
             this.txtDestinationURL.Name = "txtDestinationURL";
             this.txtDestinationURL.Size = new System.Drawing.Size(739, 20);
             this.txtDestinationURL.TabIndex = 6;
-            this.txtDestinationURL.Text = "http://servername/folder/folder/folder....";
+            this.txtDestinationURL.Text = "http://stark/Shared Documents";
             // 
             // lbDesPath
             // 

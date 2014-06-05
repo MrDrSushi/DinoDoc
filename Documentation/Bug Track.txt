@@ -1,0 +1,102 @@
+DinoDoc
+=======
+
+The little friendly batch-upload tool designed for SharePoint Server and Windows SharePoint Services, enabling you to easily upload multiple files and folders with a single click!
+For more information about DinoDoc and about SharePoint development: http://spdino.wordpress.com
+
+
+DinoDoc Features
+================
+
+You simply need to point to the source where are your files (Source Path) and type the name of your SharePoint server (Destination URL) and hit the button Upload and sit back and relax while DinoDoc takes care of the rest for you!
+It will rename files and folders incompatible with SharePoint naming standards, so you don't need to worry about incompatibility issues, and it will also recreate the same file system structure from your local source on the destination server.
+All operations are logged in your screen and you can revisit everything, if DinoDoc renamed a file or folder you can review and find the new name of the file/folder on your SharePoint server.
+
+
+
+Author............: Alex Gonsales  
+
+                    e-mail: aagons@yahoo.com
+                    
+                    http://spdino.wordpress.com
+                    
+                    http://dinodoc.codeplex.com
+                    
+                    
+Current Version...: 1.0 beta
+
+
+History Release...:
+
+                    1.0 Beta 
+                    
+                    BUG #1 = There issues with the Application.DoEvents() 
+                    
+                    - I'm in hurry and I can't fix, the next version will no longer use this
+                    awfull and horrible (woraround), I will replace by a dedicate thread, which will improve the performance and give a
+                    better feedback for users
+                    
+
+                    BUG #2 = There is no way to abort!
+                    
+                    - Yeap, once you start this thing it will run like crazy and the only to stop is calling the task manager, it really
+                    sucks and it is a shame but it falls into the same issue from BUG #1, I will include a watcher for ABORT (a button)
+                    which will issue a prompt to the user asking "YES" or "NO" to confirm the attempt to abort the operation
+                    
+                    
+                    BUG #3 = There is no check for uploading older files!
+                    
+                    - This is an easy thing to include and should be on the next version as well, the current version doesn't check if the 
+                    file you are trying to upload is older than an existing file on SharePoint, so everything is overwritted by default, 
+                    I will also include a customizable dialog to let the user determine if the files will be ovewritten among other options
+                    like overwritte based on criteria (size, date, type, contents not only taking the file name as parameter)
+                    
+                    
+                    BUG #4 = The Splash screen is not working properly
+                    
+                    - Yeah... I need time... this one is easy but time is short (right now)
+                    
+                    
+                    BUG #5 = Include a customizable "Program Options" menu
+                    
+                    - This option as previously stated on BUG #3, will prodivde a place where the users will store their custom options to 
+                    make DinoDoc more friendly and smart, the options will include the following:
+                    
+                            - Overwrite Options
+                            - Preferred List of Destination URLs (the user will easily pick up the last destination/servers used from the main UI)
+                            - Optional "Save User Info" to avoid being asked again and again when using DinoDoc authenticated
+                            - List of Files to Ignore (yeah! right now DinoDoc uses the following criteria:  *.*  for all files, and I want to have filters!)
+                    
+
+					BUG #6 = Invalid server name
+
+					- The DinoDoc is not checking if the server name (destination url) is valid, it will keep trying until a time-out is reached! 
+				
+                    
+                    
+                    BUG #7 = I DON'T KNOW...
+                    
+                    - I know I'm missing something... but well... this is what I remember now... I will everything (hopefully on the next release!)
+                    
+
+                    
+Comments..........: DinoDoc can be used without any restriction or infrigment to any copyright law, alterations and modifications to this 
+                    code should always include the original author of DinoDoc (Alex Gonsales) and also include a special note about the 
+                    author of "SharePoint Bulk Document Up Loader" (Bowsil Ameen), the existent software was based on the work of Ameen
+                    and this author strongly encourages you to visit his project since my work would not be possible without his contribution
+                    to the developer's community.
+                    
+                    My special note for the developers out there, please share this code and keep the names of everybody involved in this project,
+                    and if you decide to remove the names of the authors in the end you will not bring any help to community, it is just stealing :)
+                    
+                    PLEASE SHARE THE CODE!!!
+                    
+                    Jesus Christ once said "Treat Others The Way You Want To Be Treated!" - Read Matthew 7:12  (King James Bible my favorite)
+                    
+                    And God Bless you!
+                    
+                    (Yeap, I'm a born again Christian bible believer! - Did you have any doubts after reading my comments section?)
+                    
+
+
+Special Notes.....: This tool was based on the existing work from Bowsil Ameen (bowsilameen@hotmail.com) http://spdocuploader.codeplex.com/

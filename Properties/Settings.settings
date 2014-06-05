@@ -1,0 +1,51 @@
+﻿<?xml version='1.0' encoding='utf-8'?>
+<SettingsFile xmlns="http://schemas.microsoft.com/VisualStudio/2004/01/settings" CurrentProfile="(Default)" GeneratedClassNamespace="DinoDoc.Properties" GeneratedClassName="Settings">
+  <Profiles />
+  <Settings>
+    <Setting Name="WindowLocation" Type="System.Drawing.Point" Scope="User">
+      <Value Profile="(Default)">0, 0</Value>
+    </Setting>
+    <Setting Name="WindowSize" Type="System.Drawing.Size" Scope="User">
+      <Value Profile="(Default)">1298, 800</Value>
+    </Setting>
+    <Setting Name="OptionsOverwriteFiles" Type="System.Boolean" Scope="User">
+      <Value Profile="(Default)">False</Value>
+    </Setting>
+    <Setting Name="OptionsUseFileSize" Type="System.Boolean" Scope="User">
+      <Value Profile="(Default)">False</Value>
+    </Setting>
+    <Setting Name="OptionsUseFileDate" Type="System.Boolean" Scope="User">
+      <Value Profile="(Default)">False</Value>
+    </Setting>
+    <Setting Name="OptionsUseLogicalAND" Type="System.Boolean" Scope="User">
+      <Value Profile="(Default)">False</Value>
+    </Setting>
+    <Setting Name="OptionsUseClaimsAuthentication" Type="System.Boolean" Scope="User">
+      <Value Profile="(Default)">False</Value>
+    </Setting>
+    <Setting Name="OptionsAuthenticationMethod" Type="System.String" Scope="User">
+      <Value Profile="(Default)">PUT</Value>
+    </Setting>
+    <Setting Name="OptionsSimulationMode" Type="System.Boolean" Scope="User">
+      <Value Profile="(Default)">False</Value>
+    </Setting>
+    <Setting Name="TreeViewSource" Type="System.Int32" Scope="User">
+      <Value Profile="(Default)">325</Value>
+    </Setting>
+    <Setting Name="TreeViewFile" Type="System.Int32" Scope="User">
+      <Value Profile="(Default)">348</Value>
+    </Setting>
+    <Setting Name="TreeViewTarget" Type="System.Int32" Scope="User">
+      <Value Profile="(Default)">409</Value>
+    </Setting>
+    <Setting Name="TreeViewStatus" Type="System.Int32" Scope="User">
+      <Value Profile="(Default)">144</Value>
+    </Setting>
+    <Setting Name="WindowMaximized" Type="System.Boolean" Scope="User">
+      <Value Profile="(Default)">False</Value>
+    </Setting>
+    <Setting Name="WindowMinimized" Type="System.Boolean" Scope="User">
+      <Value Profile="(Default)">False</Value>
+    </Setting>
+  </Settings>
+</SettingsFile>

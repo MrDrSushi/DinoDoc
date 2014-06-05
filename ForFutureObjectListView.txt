@@ -1,0 +1,78 @@
+﻿Right now ObjectListView is not working and crashing my IDE everything and it fails when DinoDoc is importing folders, 
+so I will leave this code here and use later when I find time to get around with ObjectListView bugs :)
+
+
+
+
+lvStatus
+
+----------------------------------------------- columns:
+
+chSourceFolder_ 	Source = 325
+chSourceFile_		File   = 348
+chTargetFolder_		Target = 409
+chStatus_			Status = 144
+
+
+----------------------------------------------- class
+
+class FileOperations
+{
+
+	// FileOperations newObject = new FileOperations("x", "x", "x", "x");
+	// lvStatus.AddObject(newObject);
+
+	string sourceFolder;
+	string sourceFile;
+	string targetFolder;
+	string status;
+
+	public FileOperations(string SourceFolder, string SourceFile, string TargetFolder, string Status)
+	{
+		this.sourceFolder = SourceFolder;
+		this.sourceFile = SourceFile;
+		this.targetFolder = TargetFolder;
+		this.status = Status; 
+	}
+
+	public string SourceFolder
+	{
+		get { return sourceFolder; }
+		set { sourceFolder = value; }
+	}
+
+	public string SourceFile
+	{
+		get { return sourceFile; }
+		set { sourceFile = value; }
+	}
+
+	public string TargetFolder
+	{
+		get { return targetFolder; }
+		set { targetFolder = value; }
+	}
+
+	public string Status
+	{
+		get { return status; }
+		set { status = value; }
+	}
+
+	static internal List<FileOperations> Get()
+	{
+		FileOperations a = new FileOperations("a", "a", "a", "a");
+		FileOperations b = new FileOperations("b", "b", "b", "b");
+		FileOperations c = new FileOperations("c", "c", "c", "c");
+		FileOperations d = new FileOperations("d", "d", "d", "d");
+
+		List<FileOperations> x = new List<FileOperations>();
+
+		x.Add(a);
+		x.Add(b);
+		x.Add(c);
+		x.Add(d);
+
+		return x;
+	}
+}

@@ -96,6 +96,8 @@ namespace DinoDoc
         public string LogStatus;
         public Font   LogSelectionFont;
         public Color  LogSelectionColor;
+
+        public bool OperationAborted;
     }
 
     public partial class frmMain : Form
@@ -509,6 +511,8 @@ namespace DinoDoc
         /// <param name="remoteFile">remote destination</param>
         public void UploadDocument(string localFile, string remoteFile)
         {
+            ListViewItem lastItemAdded = null;
+
             try
             {
                 WebRequest request;
@@ -712,7 +716,7 @@ namespace DinoDoc
                     // 
 
                     string[] liRow = { System.IO.Path.GetFileName(localFile), fixedName.Replace("\\", "/"), "New and Renamed" };
-
+                   
                     lvStatus.Invoke((MethodInvoker)delegate()
                         {
                             lvStatus.Items.Add(localFile).SubItems.AddRange(liRow);
@@ -773,34 +777,24 @@ namespace DinoDoc
 
                 response.Close(); // close the connection
 
-                Last.LogStatus = "OK = " + localFile + "\n";
-                
-                //LogStatus.AppendText("OK = " + localFile + "\n");
+                Last.LogSelectionFont = new Font("Lucida Console", 9f, FontStyle.Regular);
+                Last.LogSelectionColor = Color.DarkBlue;
+                Last.LogStatus = "OK = " + localFile + "\n";                
             }
             catch (Exception ex)
             {
-                string[] liRow = { System.IO.Path.GetFileName(localFile), remoteFile.Replace("\\", "/"), "failure" };
+                // string[] liRow = { System.IO.Path.GetFileName(localFile), remoteFile.Replace("\\", "/"), "failure" };
 
                 lvStatus.Invoke((MethodInvoker)delegate()
                     {
-                        lvStatus.Items.Add(localFile).SubItems.AddRange(liRow);
+                        lvStatus.Items[lvStatus.Items.Count - 1].SubItems[2].Text = ex.Message;
+                        lvStatus.Items[lvStatus.Items.Count - 1].SubItems[3].Text = "failure";
                     }
                 );
-                
+
                 Last.LogSelectionFont = new Font("Lucida Console", 9f, FontStyle.Regular);
                 Last.LogSelectionColor = Color.Red;
                 Last.LogStatus = "\nfailure = " + localFile + " --- " + ex.Message + "\n\n";
-
-
-                //lvStatus.Items.Add(localFile).SubItems.AddRange(liRow);
-
-                //LogStatus.SelectionFont = new Font("Lucida Console", 9f, FontStyle.Regular);
-                //LogStatus.SelectionColor = Color.Red;
-
-                //LogStatus.AppendText("\nfailure = " + localFile + " --- " + ex.Message + "\n\n");
-
-                //LogStatus.SelectionFont = new Font("Lucida Console", 9f, FontStyle.Regular);
-                //LogStatus.SelectionColor = Color.Black;
 
                 Last.TotalFailures++;
             }
@@ -828,6 +822,7 @@ namespace DinoDoc
                 {
                     if (backgroundWorker.CancellationPending)
                     {
+                        Last.OperationAborted = true;
                         break;
                     }
 
@@ -849,6 +844,7 @@ namespace DinoDoc
                 {
                     if (backgroundWorker.CancellationPending)
                     {
+                        Last.OperationAborted = true;
                         break;
                     }
 
@@ -948,6 +944,7 @@ namespace DinoDoc
 
             if (backgroundWorker.CancellationPending)
             {
+                Last.OperationAborted = true;
                 return;
             }
         }
@@ -1065,7 +1062,7 @@ namespace DinoDoc
 
             if (txtDestinationURL.Text.Length > 0 && txtSourcePath.Text.Length > 0)
             {
-                // disable controls to prevent unwanted interactions that may affect the current task
+                // disable controls to prevent unwanted interactions that may affect the current task                
 
                 txtSourcePath.Enabled = false;
                 txtDestinationURL.Enabled = false;
@@ -1077,6 +1074,7 @@ namespace DinoDoc
                 
                 // reset the struct 
 
+                Last.OperationAborted = false;
                 Last.LogStatus = "";
                 Last.LogSelectionFont = new Font("Lucida Console", 9f, FontStyle.Regular);
                 Last.LogSelectionColor = Color.Black;
@@ -1132,7 +1130,6 @@ namespace DinoDoc
             LogStatus.SelectionFont = new Font("Lucida Console", 9f, FontStyle.Regular);
             LogStatus.SelectionColor = Color.Black;
 
-
             StatusLabel.Text = "Item: " + e.ProgressPercentage.ToString() + " of " + (Last.ComputedFiles + Last.ComputedFolders).ToString() + "  -  Processing " + Last.ComputedFileFolder;
             
             StripProgressBar.Value = e.ProgressPercentage;
@@ -1150,9 +1147,7 @@ namespace DinoDoc
 
             MenuTools_Options.Enabled = true;
 
-            //
-
-
+            // wrap up everything!
 
             LogStatus.SelectionFont = new Font("Lucida Console", 9f, FontStyle.Regular);
             LogStatus.SelectionColor = Color.DarkBlue;
@@ -1174,12 +1169,21 @@ namespace DinoDoc
             tw.WriteLine(LogStatus.Text);
             tw.Close();
 
-            StatusLabel.Text = "Dishes are done!";
+            StripProgressBar.Visible = false;            
 
             btSourceFolder.Enabled = true;
 
             btUpload.Text = "Upload";
             btUpload.Image = ((System.Drawing.Image)(Properties.Resources.Upload_Green_48x48));
+
+            if (Last.OperationAborted)
+            {
+                StatusLabel.Text = "The last operation was cancelled!";
+            }
+            else
+            {
+                StatusLabel.Text = "Dishes are done!";
+            }
         }        
     }
 }

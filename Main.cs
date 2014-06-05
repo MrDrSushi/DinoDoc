@@ -511,8 +511,6 @@ namespace DinoDoc
         /// <param name="remoteFile">remote destination</param>
         public void UploadDocument(string localFile, string remoteFile)
         {
-            ListViewItem lastItemAdded = null;
-
             try
             {
                 WebRequest request;

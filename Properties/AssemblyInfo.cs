@@ -8,7 +8,7 @@ using System.Runtime.InteropServices;
 [assembly: AssemblyTitle("DinoDoc")]
 [assembly: AssemblyDescription("SharePoint's Favorite Pet")]
 [assembly: AssemblyConfiguration("")]
-[assembly: AssemblyCompany("Something Something Dark Side")]
+[assembly: AssemblyCompany("Open-source")]
 [assembly: AssemblyProduct("DinoDoc")]
 [assembly: AssemblyCopyright("Copyright ©Alex Gonsales")]
 [assembly: AssemblyTrademark("")]

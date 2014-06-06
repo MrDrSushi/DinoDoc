@@ -1069,6 +1069,11 @@ namespace DinoDoc
                 ContextMenuLog.Enabled = false;
 
                 MenuTools_Options.Enabled = false;
+                MenuFile_ClearLogs.Enabled = false;
+                MenuFile_SaveLog.Enabled = false;
+                MenuFile_Print.Enabled = false;
+                MenuFile_PrintPreview.Enabled = false;
+                MenuFile_Exit.Enabled = false;
                 
                 // reset the struct 
 
@@ -1144,6 +1149,11 @@ namespace DinoDoc
             ContextMenuLog.Enabled = true;
 
             MenuTools_Options.Enabled = true;
+            MenuFile_ClearLogs.Enabled = true;
+            MenuFile_SaveLog.Enabled = true;
+            MenuFile_Print.Enabled = true;
+            MenuFile_PrintPreview.Enabled = true;
+            MenuFile_Exit.Enabled = true;
 
             // wrap up everything!
 

@@ -156,6 +156,8 @@
     <None Include="Resources\Recycler.gif" />
     <None Include="Resources\Source.png" />
     <None Include="Resources\SourceFolder.png" />
+    <None Include="Resources\Edit_Clear.png" />
+    <None Include="Resources\Edit_Save.png" />
     <Content Include="Resources\Uploader.ico" />
     <None Include="Resources\Upload_Blue_32x32.png" />
     <None Include="Resources\Upload_Blue_48x48.png" />

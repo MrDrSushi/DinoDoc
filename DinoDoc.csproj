@@ -145,7 +145,6 @@
     </COMReference>
   </ItemGroup>
   <ItemGroup>
-    <Content Include="ForFutureObjectListView.txt" />
     <None Include="Resources\Cancel.png" />
     <None Include="Resources\CancelFrame.png" />
     <None Include="Resources\Confirm.png" />

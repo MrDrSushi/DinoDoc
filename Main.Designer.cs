@@ -53,7 +53,8 @@
             this.rdDefault = new System.Windows.Forms.RadioButton();
             this.menuStrip = new System.Windows.Forms.MenuStrip();
             this.MenuFile = new System.Windows.Forms.ToolStripMenuItem();
-            this.MenuFiles_SaveLog = new System.Windows.Forms.ToolStripMenuItem();
+            this.MenuFile_ClearLogs = new System.Windows.Forms.ToolStripMenuItem();
+            this.MenuFile_SaveLog = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripSeparator1 = new System.Windows.Forms.ToolStripSeparator();
             this.MenuFile_Print = new System.Windows.Forms.ToolStripMenuItem();
             this.MenuFile_PrintPreview = new System.Windows.Forms.ToolStripMenuItem();
@@ -76,7 +77,6 @@
             this.StripProgressBar = new System.Windows.Forms.ToolStripProgressBar();
             this.imageList = new System.Windows.Forms.ImageList(this.components);
             this.backgroundWorker = new System.ComponentModel.BackgroundWorker();
-            this.MenuFile_ClearLogs = new System.Windows.Forms.ToolStripMenuItem();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
             this.splitContainer1.Panel1.SuspendLayout();
             this.splitContainer1.Panel2.SuspendLayout();
@@ -169,25 +169,27 @@
             this.toolStripSeparator6,
             this.toolStrip_clearAllLogs});
             this.ContextMenuLog.Name = "contextMenuStrip";
-            this.ContextMenuLog.Size = new System.Drawing.Size(147, 54);
+            this.ContextMenuLog.Size = new System.Drawing.Size(131, 54);
             // 
             // ContextMenuLog_SaveLog
             // 
+            this.ContextMenuLog_SaveLog.Image = global::DinoDoc.Properties.Resources.Edit_Save;
             this.ContextMenuLog_SaveLog.Name = "ContextMenuLog_SaveLog";
-            this.ContextMenuLog_SaveLog.Size = new System.Drawing.Size(146, 22);
+            this.ContextMenuLog_SaveLog.Size = new System.Drawing.Size(130, 22);
             this.ContextMenuLog_SaveLog.Text = "Save Log...";
             this.ContextMenuLog_SaveLog.Click += new System.EventHandler(this.MenuFile_SaveLog_Click);
             // 
             // toolStripSeparator6
             // 
             this.toolStripSeparator6.Name = "toolStripSeparator6";
-            this.toolStripSeparator6.Size = new System.Drawing.Size(143, 6);
+            this.toolStripSeparator6.Size = new System.Drawing.Size(127, 6);
             // 
             // toolStrip_clearAllLogs
             // 
+            this.toolStrip_clearAllLogs.Image = global::DinoDoc.Properties.Resources.Edit_Clear;
             this.toolStrip_clearAllLogs.Name = "toolStrip_clearAllLogs";
-            this.toolStrip_clearAllLogs.Size = new System.Drawing.Size(146, 22);
-            this.toolStrip_clearAllLogs.Text = "Clear All Logs";
+            this.toolStrip_clearAllLogs.Size = new System.Drawing.Size(130, 22);
+            this.toolStrip_clearAllLogs.Text = "Clear Logs";
             this.toolStrip_clearAllLogs.Click += new System.EventHandler(this.MenuFile_ClearLogs_Clicks);
             // 
             // grpboxAuthentication
@@ -302,7 +304,7 @@
             // 
             this.MenuFile.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.MenuFile_ClearLogs,
-            this.MenuFiles_SaveLog,
+            this.MenuFile_SaveLog,
             this.toolStripSeparator1,
             this.MenuFile_Print,
             this.MenuFile_PrintPreview,
@@ -312,13 +314,23 @@
             this.MenuFile.Size = new System.Drawing.Size(37, 20);
             this.MenuFile.Text = "&File";
             // 
-            // MenuFiles_SaveLog
+            // MenuFile_ClearLogs
             // 
-            this.MenuFiles_SaveLog.Name = "MenuFiles_SaveLog";
-            this.MenuFiles_SaveLog.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.S)));
-            this.MenuFiles_SaveLog.Size = new System.Drawing.Size(170, 22);
-            this.MenuFiles_SaveLog.Text = "Save &Log...";
-            this.MenuFiles_SaveLog.Click += new System.EventHandler(this.MenuFile_SaveLog_Click);
+            this.MenuFile_ClearLogs.Image = global::DinoDoc.Properties.Resources.Edit_Clear;
+            this.MenuFile_ClearLogs.Name = "MenuFile_ClearLogs";
+            this.MenuFile_ClearLogs.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.L)));
+            this.MenuFile_ClearLogs.Size = new System.Drawing.Size(170, 22);
+            this.MenuFile_ClearLogs.Text = "&Clear Logs";
+            this.MenuFile_ClearLogs.Click += new System.EventHandler(this.MenuFile_ClearLogs_Clicks);
+            // 
+            // MenuFile_SaveLog
+            // 
+            this.MenuFile_SaveLog.Image = global::DinoDoc.Properties.Resources.Edit_Save;
+            this.MenuFile_SaveLog.Name = "MenuFile_SaveLog";
+            this.MenuFile_SaveLog.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.S)));
+            this.MenuFile_SaveLog.Size = new System.Drawing.Size(170, 22);
+            this.MenuFile_SaveLog.Text = "Save &Log...";
+            this.MenuFile_SaveLog.Click += new System.EventHandler(this.MenuFile_SaveLog_Click);
             // 
             // toolStripSeparator1
             // 
@@ -383,7 +395,7 @@
             // MenuHelp_About
             // 
             this.MenuHelp_About.Name = "MenuHelp_About";
-            this.MenuHelp_About.Size = new System.Drawing.Size(152, 22);
+            this.MenuHelp_About.Size = new System.Drawing.Size(116, 22);
             this.MenuHelp_About.Text = "&About...";
             this.MenuHelp_About.Click += new System.EventHandler(this.MenuHelp_About_Click);
             // 
@@ -470,7 +482,7 @@
             this.LogStatus.HideSelection = false;
             this.LogStatus.Location = new System.Drawing.Point(2, 1);
             this.LogStatus.Name = "LogStatus";
-            this.LogStatus.Size = new System.Drawing.Size(1276, 153);
+            this.LogStatus.Size = new System.Drawing.Size(1276, 157);
             this.LogStatus.TabIndex = 10;
             this.LogStatus.Text = "";
             this.LogStatus.WordWrap = false;
@@ -521,14 +533,6 @@
             this.backgroundWorker.DoWork += new System.ComponentModel.DoWorkEventHandler(this.backgroundWorker_DoWork);
             this.backgroundWorker.ProgressChanged += new System.ComponentModel.ProgressChangedEventHandler(this.backgroundWorker_ProgressChanged);
             this.backgroundWorker.RunWorkerCompleted += new System.ComponentModel.RunWorkerCompletedEventHandler(this.backgroundWorker_RunWorkerCompleted);
-            // 
-            // MenuFile_ClearLogs
-            // 
-            this.MenuFile_ClearLogs.Name = "MenuFile_ClearLogs";
-            this.MenuFile_ClearLogs.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.L)));
-            this.MenuFile_ClearLogs.Size = new System.Drawing.Size(170, 22);
-            this.MenuFile_ClearLogs.Text = "&Clear Log";
-            this.MenuFile_ClearLogs.Click += new System.EventHandler(this.MenuFile_ClearLogs_Clicks);
             // 
             // frmMain
             // 
@@ -587,7 +591,7 @@
         private System.Windows.Forms.ToolStripProgressBar StripProgressBar;
         private System.Windows.Forms.MenuStrip menuStrip;
         private System.Windows.Forms.ToolStripMenuItem MenuFile;
-        private System.Windows.Forms.ToolStripMenuItem MenuFiles_SaveLog;
+        private System.Windows.Forms.ToolStripMenuItem MenuFile_SaveLog;
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator1;
         private System.Windows.Forms.ToolStripMenuItem MenuFile_Print;
         private System.Windows.Forms.ToolStripMenuItem MenuFile_PrintPreview;

@@ -104,6 +104,10 @@ namespace DinoDoc
     {
         LastActionProcessed Last;
 
+        /// <summary>
+        /// Enables a control to be double buffered to prevent flickering
+        /// </summary>
+        /// <param name="c">Control Name</param>
         public static void SetDoubleBuffered(System.Windows.Forms.Control c)
         {
             //Taxes: Remote Desktop Connection and painting
@@ -163,6 +167,11 @@ namespace DinoDoc
             tvcStatus.Width = Settings.Default.TreeViewStatus;
         }
 
+        /// <summary>
+        /// Performs the closing and will store the window location and dimensions
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void frmMain_FormClosing(object sender, FormClosingEventArgs e)
         {
             if (WindowState == FormWindowState.Maximized)
@@ -946,6 +955,8 @@ namespace DinoDoc
                 return;
             }
         }
+
+        // ====================================================================================================== UI Controls
 
         private void btSourceFolder_Click(object sender, EventArgs e)
         {

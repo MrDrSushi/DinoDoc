@@ -49,8 +49,8 @@
             this.txtUserDomain = new System.Windows.Forms.TextBox();
             this.txtUserPassword = new System.Windows.Forms.TextBox();
             this.txtUserName = new System.Windows.Forms.TextBox();
-            this.rdProvide = new System.Windows.Forms.RadioButton();
-            this.rdDefault = new System.Windows.Forms.RadioButton();
+            this.rdCredentialsSupply = new System.Windows.Forms.RadioButton();
+            this.rdCredentialsDefault = new System.Windows.Forms.RadioButton();
             this.menuStrip = new System.Windows.Forms.MenuStrip();
             this.MenuFile = new System.Windows.Forms.ToolStripMenuItem();
             this.MenuFile_ClearLogs = new System.Windows.Forms.ToolStripMenuItem();
@@ -117,8 +117,8 @@
             // 
             this.splitContainer1.Panel2.Controls.Add(this.LogStatus);
             this.splitContainer1.Panel2.Padding = new System.Windows.Forms.Padding(11, 5, 11, 5);
-            this.splitContainer1.Size = new System.Drawing.Size(1284, 662);
-            this.splitContainer1.SplitterDistance = 477;
+            this.splitContainer1.Size = new System.Drawing.Size(1140, 511);
+            this.splitContainer1.SplitterDistance = 368;
             this.splitContainer1.SplitterWidth = 3;
             this.splitContainer1.TabIndex = 0;
             // 
@@ -134,10 +134,10 @@
             this.tvcStatus});
             this.lvStatus.ContextMenuStrip = this.ContextMenuLog;
             this.lvStatus.FullRowSelect = true;
-            this.lvStatus.Location = new System.Drawing.Point(3, 122);
+            this.lvStatus.Location = new System.Drawing.Point(1, 122);
             this.lvStatus.Margin = new System.Windows.Forms.Padding(1);
             this.lvStatus.Name = "lvStatus";
-            this.lvStatus.Size = new System.Drawing.Size(1275, 350);
+            this.lvStatus.Size = new System.Drawing.Size(1135, 241);
             this.lvStatus.TabIndex = 11;
             this.lvStatus.UseCompatibleStateImageBehavior = false;
             this.lvStatus.View = System.Windows.Forms.View.Details;
@@ -201,9 +201,9 @@
             this.grpboxAuthentication.Controls.Add(this.txtUserDomain);
             this.grpboxAuthentication.Controls.Add(this.txtUserPassword);
             this.grpboxAuthentication.Controls.Add(this.txtUserName);
-            this.grpboxAuthentication.Controls.Add(this.rdProvide);
-            this.grpboxAuthentication.Controls.Add(this.rdDefault);
-            this.grpboxAuthentication.Location = new System.Drawing.Point(992, 15);
+            this.grpboxAuthentication.Controls.Add(this.rdCredentialsSupply);
+            this.grpboxAuthentication.Controls.Add(this.rdCredentialsDefault);
+            this.grpboxAuthentication.Location = new System.Drawing.Point(848, 15);
             this.grpboxAuthentication.Name = "grpboxAuthentication";
             this.grpboxAuthentication.Size = new System.Drawing.Size(276, 101);
             this.grpboxAuthentication.TabIndex = 8;
@@ -252,6 +252,7 @@
             this.txtUserPassword.Name = "txtUserPassword";
             this.txtUserPassword.Size = new System.Drawing.Size(140, 20);
             this.txtUserPassword.TabIndex = 5;
+            this.txtUserPassword.Text = "P@ssword";
             this.txtUserPassword.UseSystemPasswordChar = true;
             // 
             // txtUserName
@@ -262,30 +263,31 @@
             this.txtUserName.Name = "txtUserName";
             this.txtUserName.Size = new System.Drawing.Size(140, 20);
             this.txtUserName.TabIndex = 3;
+            this.txtUserName.Text = "sp_admin";
             // 
-            // rdProvide
+            // rdCredentialsSupply
             // 
-            this.rdProvide.AutoSize = true;
-            this.rdProvide.Location = new System.Drawing.Point(196, 0);
-            this.rdProvide.Name = "rdProvide";
-            this.rdProvide.Size = new System.Drawing.Size(57, 17);
-            this.rdProvide.TabIndex = 1;
-            this.rdProvide.Text = "S&upply";
-            this.rdProvide.UseVisualStyleBackColor = true;
-            this.rdProvide.CheckedChanged += new System.EventHandler(this.rdProvide_CheckedChanged);
+            this.rdCredentialsSupply.AutoSize = true;
+            this.rdCredentialsSupply.Checked = true;
+            this.rdCredentialsSupply.Location = new System.Drawing.Point(199, 0);
+            this.rdCredentialsSupply.Name = "rdCredentialsSupply";
+            this.rdCredentialsSupply.Size = new System.Drawing.Size(57, 17);
+            this.rdCredentialsSupply.TabIndex = 1;
+            this.rdCredentialsSupply.TabStop = true;
+            this.rdCredentialsSupply.Text = "S&upply";
+            this.rdCredentialsSupply.UseVisualStyleBackColor = true;
+            this.rdCredentialsSupply.CheckedChanged += new System.EventHandler(this.rdCredentialsSupply_CheckedChanged);
             // 
-            // rdDefault
+            // rdCredentialsDefault
             // 
-            this.rdDefault.AutoSize = true;
-            this.rdDefault.Checked = true;
-            this.rdDefault.Location = new System.Drawing.Point(139, 0);
-            this.rdDefault.Name = "rdDefault";
-            this.rdDefault.Size = new System.Drawing.Size(59, 17);
-            this.rdDefault.TabIndex = 0;
-            this.rdDefault.TabStop = true;
-            this.rdDefault.Text = "D&efault";
-            this.rdDefault.UseVisualStyleBackColor = true;
-            this.rdDefault.CheckedChanged += new System.EventHandler(this.rdDefault_CheckedChanged);
+            this.rdCredentialsDefault.AutoSize = true;
+            this.rdCredentialsDefault.Location = new System.Drawing.Point(139, 0);
+            this.rdCredentialsDefault.Name = "rdCredentialsDefault";
+            this.rdCredentialsDefault.Size = new System.Drawing.Size(59, 17);
+            this.rdCredentialsDefault.TabIndex = 0;
+            this.rdCredentialsDefault.Text = "D&efault";
+            this.rdCredentialsDefault.UseVisualStyleBackColor = true;
+            this.rdCredentialsDefault.CheckedChanged += new System.EventHandler(this.rdCredentialsDefault_CheckedChanged);
             // 
             // menuStrip
             // 
@@ -406,7 +408,7 @@
             this.btUpload.ForeColor = System.Drawing.SystemColors.Highlight;
             this.btUpload.Image = global::DinoDoc.Properties.Resources.Upload_Green_48x48;
             this.btUpload.ImageAlign = System.Drawing.ContentAlignment.BottomCenter;
-            this.btUpload.Location = new System.Drawing.Point(875, 23);
+            this.btUpload.Location = new System.Drawing.Point(731, 23);
             this.btUpload.Name = "btUpload";
             this.btUpload.Size = new System.Drawing.Size(78, 77);
             this.btUpload.TabIndex = 7;
@@ -422,7 +424,7 @@
             | System.Windows.Forms.AnchorStyles.Right)));
             this.txtDestinationURL.Location = new System.Drawing.Point(116, 73);
             this.txtDestinationURL.Name = "txtDestinationURL";
-            this.txtDestinationURL.Size = new System.Drawing.Size(739, 20);
+            this.txtDestinationURL.Size = new System.Drawing.Size(595, 20);
             this.txtDestinationURL.TabIndex = 6;
             this.txtDestinationURL.Text = "http://stark/Shared Documents";
             // 
@@ -442,7 +444,7 @@
             this.btSourceFolder.ForeColor = System.Drawing.SystemColors.Highlight;
             this.btSourceFolder.Image = global::DinoDoc.Properties.Resources.SourceFolder;
             this.btSourceFolder.ImageAlign = System.Drawing.ContentAlignment.MiddleRight;
-            this.btSourceFolder.Location = new System.Drawing.Point(814, 23);
+            this.btSourceFolder.Location = new System.Drawing.Point(670, 23);
             this.btSourceFolder.Name = "btSourceFolder";
             this.btSourceFolder.Size = new System.Drawing.Size(41, 44);
             this.btSourceFolder.TabIndex = 4;
@@ -459,7 +461,7 @@
             | System.Windows.Forms.AnchorStyles.Right)));
             this.txtSourcePath.Location = new System.Drawing.Point(117, 36);
             this.txtSourcePath.Name = "txtSourcePath";
-            this.txtSourcePath.Size = new System.Drawing.Size(691, 20);
+            this.txtSourcePath.Size = new System.Drawing.Size(547, 20);
             this.txtSourcePath.TabIndex = 3;
             this.txtSourcePath.Text = "c:\\temp";
             // 
@@ -477,12 +479,14 @@
             this.LogStatus.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
+            this.LogStatus.AutoWordSelection = true;
             this.LogStatus.ContextMenuStrip = this.ContextMenuLog;
             this.LogStatus.Font = new System.Drawing.Font("Lucida Console", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.LogStatus.HideSelection = false;
-            this.LogStatus.Location = new System.Drawing.Point(2, 1);
+            this.LogStatus.Location = new System.Drawing.Point(1, 1);
             this.LogStatus.Name = "LogStatus";
-            this.LogStatus.Size = new System.Drawing.Size(1276, 157);
+            this.LogStatus.ReadOnly = true;
+            this.LogStatus.Size = new System.Drawing.Size(1135, 114);
             this.LogStatus.TabIndex = 10;
             this.LogStatus.Text = "";
             this.LogStatus.WordWrap = false;
@@ -500,16 +504,16 @@
             this.StatusStrip.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.StatusLabel,
             this.StripProgressBar});
-            this.StatusStrip.Location = new System.Drawing.Point(0, 640);
+            this.StatusStrip.Location = new System.Drawing.Point(0, 489);
             this.StatusStrip.Name = "StatusStrip";
-            this.StatusStrip.Size = new System.Drawing.Size(1284, 22);
+            this.StatusStrip.Size = new System.Drawing.Size(1140, 22);
             this.StatusStrip.TabIndex = 13;
             this.StatusStrip.Text = "statusStrip1";
             // 
             // StatusLabel
             // 
             this.StatusLabel.Name = "StatusLabel";
-            this.StatusLabel.Size = new System.Drawing.Size(1269, 17);
+            this.StatusLabel.Size = new System.Drawing.Size(1125, 17);
             this.StatusLabel.Spring = true;
             this.StatusLabel.TextAlign = System.Drawing.ContentAlignment.BottomLeft;
             // 
@@ -538,7 +542,7 @@
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(1284, 662);
+            this.ClientSize = new System.Drawing.Size(1140, 511);
             this.Controls.Add(this.StatusStrip);
             this.Controls.Add(this.splitContainer1);
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
@@ -574,8 +578,8 @@
         private System.Windows.Forms.Label label3;
         private System.Windows.Forms.TextBox txtUserPassword;
         private System.Windows.Forms.TextBox txtUserName;
-        private System.Windows.Forms.RadioButton rdProvide;
-        private System.Windows.Forms.RadioButton rdDefault;
+        private System.Windows.Forms.RadioButton rdCredentialsSupply;
+        private System.Windows.Forms.RadioButton rdCredentialsDefault;
         private System.Windows.Forms.Button btUpload;
         private System.Windows.Forms.TextBox txtDestinationURL;
         private System.Windows.Forms.Label lbDesPath;

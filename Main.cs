@@ -51,26 +51,14 @@
  */
 
 using System;
-
 using System.IO;
-using System.Net;
-using System.Data;
 using System.Linq;
 using System.Text;
 using System.Drawing;
-using Microsoft.Win32;
-
-using System.Security;
-using System.Security.Permissions;
-
-using System.Threading;
 using System.ComponentModel;
-using System.Collections;
-using System.Collections.Generic;
-
+using System.Net;
+using System.Net.Cache;
 using System.Windows.Forms;
-using System.Security.Principal;
-using System.Runtime.InteropServices;
 using System.Text.RegularExpressions;
 
 using DinoDoc.Properties;
@@ -91,8 +79,11 @@ namespace DinoDoc
         public int TotalFolders;
         public int TotalFiles;
         public int TotalFilesRenamed;
+        public int TotalFilesSkipped;
+        public int TotalFilesOverwritten;
         public int TotalFailures;
 
+        public string Status;
         public string LogStatus;
         public Font   LogSelectionFont;
         public Color  LogSelectionColor;
@@ -165,6 +156,8 @@ namespace DinoDoc
             tvcFile.Width = Settings.Default.TreeViewFile;
             tvcTarget.Width = Settings.Default.TreeViewTarget;
             tvcStatus.Width = Settings.Default.TreeViewStatus;
+
+            rdCredentialsSupply_CheckedChanged(sender, e);
         }
 
         /// <summary>
@@ -219,7 +212,7 @@ namespace DinoDoc
 
                 Last.ComputedFiles += fileEntries.Count();
 
-                StatusLabel.Text = "Computing " + Last.ComputedFiles.ToString() + " files..." + Last.ComputedFiles.ToString();
+                StatusLabel.Text = "Discovering Files: " + Last.ComputedFiles.ToString() + "... so far";
 
                 string[] subdirEntries = Directory.GetDirectories(SourceDir);
 
@@ -273,10 +266,45 @@ namespace DinoDoc
         }
 
         /// <summary>
+        /// Checks if a files exists on the remote server  ------------- FAILURE: 404 NOT AUTHORIZED? NOT FOUND?
+        /// </summary>
+        /// <param name="FileNameAndLocation">The current Web Request in use pointing to the remote file on the server</param>
+        /// <returns>Returns True if the file is found, False otherwise</returns>
+        public bool CheckRemoteFileExists(string FileNameAndLocation)
+        {
+            try
+            {
+                WebRequest request = WebRequest.Create(FileNameAndLocation);
+                
+                request.Method = "HEAD";
+                request.Timeout = Decimal.ToInt32(Settings.Default.OptionsTimeOut * 10000);
+
+                if (rdCredentialsDefault.Checked == true)
+                {
+                    request.Credentials = CredentialCache.DefaultCredentials;
+                }
+                else if ((txtUserName.Text.Length > 0) && (txtUserPassword.Text.Length > 0))
+                {
+                    request.Credentials = new System.Net.NetworkCredential(txtUserName.Text.Trim(), txtUserPassword.Text.Trim(), txtUserDomain.Text.Trim());
+                }
+
+                request.CachePolicy = new RequestCachePolicy(RequestCacheLevel.NoCacheNoStore);
+
+                var response = request.GetResponse() as HttpWebResponse;
+
+                return (response.StatusCode == HttpStatusCode.OK);
+            }
+            catch (WebException)
+            {
+                return false;
+            }
+        }
+
+        /// <summary>
         /// Returns the File Size from a local file 
         /// </summary>
-        /// <param name="FileNameAndLocation">File Name and its Location</param>
-        /// <returns>File Size</returns>        
+        /// <param name="FileNameAndLocation">The file name and local location</param>
+        /// <returns>returns File Size</returns>        
         public long GetLocalFileSize(string FileNameAndLocation)
         {
             try
@@ -299,10 +327,29 @@ namespace DinoDoc
         }
 
         /// <summary>
+        /// Returns the file's date from a local file
+        /// </summary>
+        /// <param name="FileNameAndLocation">The file name and local location</param>
+        /// <returns>returns the file date and time</returns>
+        public DateTime GetLocalFileDate(string FileNameAndLocation)
+        {
+            // i need to include some special file i/o checking
+
+            if (File.Exists(FileNameAndLocation))
+            {
+                return File.GetCreationTime(FileNameAndLocation);
+            }
+            else
+            {
+                return new DateTime(1900, 1, 1);
+            }
+        }
+
+        /// <summary>
         /// Returns the File Size from a file located on a remote server
         /// </summary>
-        /// <param name="FileNameAndLocation">file location</param>
-        /// <returns>long File Size</returns>
+        /// <param name="FileNameAndLocation">The file name and remote location</param>
+        /// <returns>returns the File Size</returns>
         public long GetRemoteFileSize(string FileNameAndLocation)
         {
             WebHeaderCollection headers;
@@ -314,7 +361,7 @@ namespace DinoDoc
             //   Send the credentials before calling for the response()
             //
 
-            if (rdDefault.Checked == true)
+            if (rdCredentialsDefault.Checked == true)
             {
                 request.Credentials = CredentialCache.DefaultCredentials;
             }
@@ -357,28 +404,9 @@ namespace DinoDoc
         }
 
         /// <summary>
-        /// Returns the file's date from a local file
-        /// </summary>
-        /// <param name="FileNameAndLocation"></param>
-        /// <returns></returns>
-        public DateTime GetLocalFileDate(string FileNameAndLocation)
-        {
-            // i need to include some special file i/o checking
-
-            if (File.Exists(FileNameAndLocation))
-            {
-                return File.GetCreationTime(FileNameAndLocation);
-            }
-            else
-            {
-                return new DateTime(1900, 1, 1);
-            }
-        }
-
-        /// <summary>
         /// Returns the date from a file located on remote server
         /// </summary>
-        /// <param name="FileNameAndLocation"></param>
+        /// <param name="FileNameAndLocation">The file name and remote location</param>
         /// <returns></returns>
         public DateTime GetRemoteFileDate(string FileNameAndLocation)
         {
@@ -391,7 +419,7 @@ namespace DinoDoc
             //   Send the credentials before calling for the response()
             //
 
-            if (rdDefault.Checked == true)
+            if (rdCredentialsDefault.Checked == true)
             {
                 request.Credentials = CredentialCache.DefaultCredentials;
             }
@@ -444,13 +472,19 @@ namespace DinoDoc
 
             Uri myURI = new Uri(remoteFolderName);
 
-            WebRequest request = WebRequest.Create(myURI);          // WebRequest request = (WebRequest)WebRequest.Create(myUri);
+            WebRequest request = WebRequest.Create(myURI);
+
+            //
+            //  Timeout
+            //
+
+            request.Timeout = Decimal.ToInt32(Settings.Default.OptionsTimeOut * 10000);
 
             //
             //  Determine the authentication mode
             //
 
-            if (rdDefault.Checked == true)
+            if (rdCredentialsDefault.Checked == true)
             {
                 request.Credentials = CredentialCache.DefaultCredentials;
             }
@@ -468,9 +502,7 @@ namespace DinoDoc
                 request.Headers.Add("X-FORMS_BASED_AUTH_ACCEPTED", "f");
             }
 
-            // request.Credentials = CredentialCache.DefaultCredentials;
-
-            request.Method = "MKCOL";
+            request.Method = "MKCOL";            
 
             HttpStatusCode statusCode;
 
@@ -481,8 +513,6 @@ namespace DinoDoc
                     HttpWebResponse httpResponse = (HttpWebResponse)response;
 
                     statusCode = httpResponse.StatusCode;
-
-                    //Console.WriteLine(httpResponse.StatusCode);
                 }
             }
             catch (WebException e)
@@ -493,7 +523,7 @@ namespace DinoDoc
                     {
                         HttpWebResponse httpResponse = (HttpWebResponse)response;
 
-                        //Console.WriteLine("Error code: {0}", httpResponse.StatusCode);
+                        //Console.WriteLine("Error code: {0}", httpResponse.StatusCode);+
 
                         using (Stream data = response.GetResponseStream())
                         {
@@ -522,139 +552,31 @@ namespace DinoDoc
         {
             try
             {
+                //
+                //  Start the Request for the Upload  
+                //
+
                 WebRequest request;
 
-                string originalName = System.IO.Path.GetFileName(remoteFile);
-                string fixedName = FixName(originalName);
+                request = WebRequest.Create(remoteFile);
 
                 //
-                //  This will create the request to where we want to send the file to (URL Request)
+                //  Defines POST or PUT, determined by program options
                 //
 
-                request = WebRequest.Create(txtDestinationURL.Text);
-
-                //
-                //  Check file name compatibility comparing  "OriginalName vs FixedName"
-                //
-
-                if (originalName != fixedName)
-                {
-                    string newFileRenamed = System.IO.Path.GetDirectoryName(remoteFile);
-
-                    newFileRenamed = newFileRenamed.Replace(@"\", @"/");
-                    newFileRenamed = newFileRenamed.Replace(@":/", @"://");
-
-                    request = WebRequest.Create(newFileRenamed + @"/" + fixedName);
-
-                    //
-                    // Let's keep the count of renamed files
-                    //
-
-                    Last.TotalFilesRenamed++;
-
-                    #region Simulation Mode
-
-                    /*
-                     *     to be implemented
-                     * 
-
-                    //
-                    //   Simulation Mode? YES or NO?
-                    //
-
-                    if (!Options_SimulationMode)
-                    {
-                        //
-                        //   Check if the user allowed files to be overwritten
-                        //
-                        if (Options_OverwriteFiles)
-                        {
-                            //
-                            //   Check File Size and Date or individually...
-                            // 
-                            if (Options_OverwriteFiles_FileSize && Options_OverwriteFiles_FileDate)
-                            {
-                                //
-                                //   Will use OR or AND according to the settings from the registry
-                                //
-                                if (Options_OverwriteFiles_LogicalAND)
-                                {
-                                    if (GetLocalFileSize(localFile) != GetRemoteFileSize(remoteFile) && GetLocalFileDate(localFile) != GetRemoteFileDate(remoteFile))
-                                    {
-                                        request = WebRequest.Create(newFileRenamed + @"/" + fixedName);
-                                    }
-                                }
-                                else
-                                {
-                                    if (GetLocalFileSize(localFile) != GetRemoteFileSize(remoteFile) || GetLocalFileDate(localFile) != GetRemoteFileDate(remoteFile))
-                                    {
-                                        request = WebRequest.Create(newFileRenamed + @"/" + fixedName);
-                                    }
-                                }
-                            }
-                            else if (Options_OverwriteFiles_FileSize)
-                            {
-                                if (GetLocalFileSize(localFile) != GetRemoteFileSize(remoteFile))
-                                {
-                                    request = WebRequest.Create(newFileRenamed + @"/" + fixedName);
-                                }
-                            }
-                            else if (Options_OverwriteFiles_FileDate)
-                            {
-                                if (GetRemoteFileDate(remoteFile) != GetLocalFileDate(localFile))
-                                {
-                                    request = WebRequest.Create(newFileRenamed + @"/" + fixedName);
-                                }
-                            }
-                        }
-                    }
-                    else
-                    {
-                        request = null;
-                    }
-                    
-                    *
-                    * 
-                    */
-
-                    #endregion
-
-                }
-                else
-                {
-                    //
-                    //  simulation mode = on/off ?
-                    //
-
-                    if (!Settings.Default.OptionsSimulationMode)
-                    {
-                        request = WebRequest.Create(remoteFile);
-                    }
-                    else
-                    {
-                        request = null;
-                    }
-                }
-
-                //
-                //  This will define the Content Type for the request
-                //
-
-                //    request.ContentType = "application/x-www-form-urlencoded";   //  I'M NOT USING THIS THING RIGHT NOW!!!!
-
-                request.Method = Settings.Default.OptionsAuthenticationMethod;    // POST or PUT, will be determined by program options                
+                request.Method = Settings.Default.OptionsAuthenticationMethod;
 
                 //
                 //  Connection Time-out, right now is internal and I plan to make it available in the Options dialog later
                 //
 
-                request.Timeout = 30000;
+                request.Timeout = Decimal.ToInt32(Settings.Default.OptionsTimeOut * 10000);
 
                 //
                 //  Determine the Credentials used for authentication
                 //
 
-                if (rdDefault.Checked == true)
+                if (rdCredentialsDefault.Checked == true)
                 {
                     request.Credentials = CredentialCache.DefaultCredentials;
                 }
@@ -669,129 +591,59 @@ namespace DinoDoc
 
                 if (Settings.Default.OptionsUseClaimsAuthentication)
                 {
-                    request.Headers.Add("X-FORMS_BASED_AUTH_ACCEPTED", "f"); // request.Headers.Add("X-FORMS_BASED_AUTH_ACCEPTED", "t");
-                }
-
-                #region Old WebRequest Transfer (not in use for now)
-                /*************  old no longer working
+                    // request.Headers.Add("X-FORMS_BASED_AUTH_ACCEPTED", "t");
+                    request.Headers.Add("X-FORMS_BASED_AUTH_ACCEPTED", "f"); 
+                }                
 
                 //
-                //   Defines the real length of the request to be sent
+                //  Prcoess the upload
                 //
-
-
-                // 1st = open the source file
-                FileStream streamSourceFile = File.OpenRead(localFile);
-
-                // 2nd = loads the buffer by determining the length from the source
-                byte[] bufferSourceFile = new byte[streamSourceFile.Length];
-
-                // 3rd = read from the source file into the buffer according to the lenght of the file
-                streamSourceFile.Read(bufferSourceFile, 0, bufferSourceFile.Length); //   bufferSourceFile.Length);
-
-                // 4th = the lenght of the content is the size of the buffer
-                request.ContentLength = bufferSourceFile.Length;
                 
+                string[] liRow = { System.IO.Path.GetFileName(localFile), remoteFile, Last.Status };
 
-                //
-                //  Writes the file to its destination
-                //
-
-                BinaryWriter writer = new BinaryWriter(request.GetRequestStream());   // new BinaryWriter(request.GetRequestStream());
-
-                writer.Write(bufferSourceFile, 0, bufferSourceFile.Length);  // Write(bufferSourceFile, 0, bufferSourceFile.Length);
-                writer.Close();
-                
-                * 
-                * 
-                ****************************/
-                #endregion
-
-
-                //
-                //  Provides the user feedback about the last file operation
-                //
-
-                if (originalName != fixedName)
-                {
-                    //
-                    //  I will replace the standard ListView by the amazing ObjectListView, which will be more useful to display the progress for long operations
-                    //  whne I'm uploading really big files, I can use the for-loop to indicate a dedicate progress bar for invidual files while the use watchs the updates on the screen
-                    //
-                    //  FileOperations item = new FileOperations(localFile, System.IO.Path.GetFileName(localFile), fixedName.Replace("\\", "/"), "New");
-                    //  lvStatus.AddObject(item);
-                    // 
-
-                    string[] liRow = { System.IO.Path.GetFileName(localFile), fixedName.Replace("\\", "/"), "New and Renamed" };
-                   
-                    lvStatus.Invoke((MethodInvoker)delegate()
-                        {
-                            lvStatus.Items.Add(localFile).SubItems.AddRange(liRow);
-                        }
-                    );
-
-                    //lvStatus.Items.Add(localFile).SubItems.AddRange(liRow);
-
-                    byte[] fileBuffer = new byte[1024];                                                                     // Create buffer to transfer file                
-                    using (Stream stream = request.GetRequestStream())                                                      // Write the contents of the local file to the request stream.
+                lvStatus.Invoke((MethodInvoker)delegate()
                     {
-                        using (FileStream fsUploadStream = File.Open(localFile, FileMode.Open, FileAccess.Read))            // Load the content from local file to stream
-                        {
-                            int startBuffer = fsUploadStream.Read(fileBuffer, 0, fileBuffer.Length);                        // Get the start point
-                            for (int i = startBuffer; i > 0; i = fsUploadStream.Read(fileBuffer, 0, fileBuffer.Length))
-                            {
-                                stream.Write(fileBuffer, 0, i);
-                            }
-                        }
+                        lvStatus.Items.Add(localFile).SubItems.AddRange(liRow);
                     }
+                );
+                
+                byte[] fileBuffer = new byte[1024];                                                                       // Create buffer to transfer file
 
-                }
-                else
+                using (Stream stream = request.GetRequestStream())                                                        // Gets the request stream
                 {
-                    //
-                    //  I will replace the standard ListView by the amazing ObjectListView, which will be more useful to display the progress for long operations
-                    //  whne I'm uploading really big files, I can use the for-loop to indicate a dedicate progress bar for invidual files while the use watchs the updates on the screen
-                    //
-                    //  FileOperations item = new FileOperations(localFile, System.IO.Path.GetFileName(localFile), fixedName.Replace("\\", "/"), "New");
-                    //  lvStatus.AddObject(item);
-                    // 
-
-                    string[] liRow = { System.IO.Path.GetFileName(localFile), remoteFile.Replace("\\", "/"), "New" };
-                   
-                    lvStatus.Invoke((MethodInvoker)delegate()
-                        {
-                          lvStatus.Items.Add(localFile).SubItems.AddRange(liRow);
-                        }
-                    );
-
-                    //lvStatus.Items.Add(localFile).SubItems.AddRange(liRow);
-
-                    byte[] fileBuffer = new byte[1024];                                                                     // Create buffer to transfer file                
-                    using (Stream stream = request.GetRequestStream())                                                      // Write the contents of the local file to the request stream.
+                    using (FileStream fsUploadStream = File.Open(localFile, FileMode.Open, FileAccess.Read))              // Load the content from local file to stream
                     {
-                        using (FileStream fsUploadStream = File.Open(localFile, FileMode.Open, FileAccess.Read))            // Load the content from local file to stream
+                        int startBuffer = fsUploadStream.Read(fileBuffer, 0, fileBuffer.Length);                          // Get the start point
+
+                        for (int i = startBuffer; i > 0; i = fsUploadStream.Read(fileBuffer, 0, fileBuffer.Length))       // Loops through the stream
                         {
-                            int startBuffer = fsUploadStream.Read(fileBuffer, 0, fileBuffer.Length);                        // Get the start point
-                            for (int i = startBuffer; i > 0; i = fsUploadStream.Read(fileBuffer, 0, fileBuffer.Length))
-                            {
-                                stream.Write(fileBuffer, 0, i);
-                            }
+                            stream.Write(fileBuffer, 0, i);                                                               // Performs the writing
                         }
                     }
                 }
 
-                WebResponse response = request.GetResponse(); // upload the file
+                //
+                //  Gets the response
+                //
 
-                response.Close(); // close the connection
+                WebResponse response = request.GetResponse();
+
+                //
+                //  Close the connection
+                //
+
+                response.Close();
+
+                //
+                //  Log the operation
+                //
 
                 Last.LogSelectionFont = new Font("Lucida Console", 9f, FontStyle.Regular);
                 Last.LogSelectionColor = Color.DarkBlue;
-                Last.LogStatus = "OK = " + localFile + "\n";                
+                Last.LogStatus = "OK      = " + localFile + "\n";                
             }
             catch (Exception ex)
             {
-                // string[] liRow = { System.IO.Path.GetFileName(localFile), remoteFile.Replace("\\", "/"), "failure" };
-
                 lvStatus.Invoke((MethodInvoker)delegate()
                     {
                         lvStatus.Items[lvStatus.Items.Count - 1].SubItems[2].Text = ex.Message;
@@ -805,14 +657,16 @@ namespace DinoDoc
 
                 Last.TotalFailures++;
             }
+
+            backgroundWorker.ReportProgress(Last.TotalFiles + Last.TotalFolders);
         }
         
         /// <summary>
         /// Used to start the Upload process, which will compute, create folders (CreateWebDavFolder) and upload files (UploadDocument)
         /// </summary>
-        /// <param name="SourceDir">source location</param>
-        /// <param name="TargetDir">target location</param>
-        /// <param name="recursionLvl">recursivity level (default = 0)</param>
+        /// <param name="SourceDir">Source location</param>
+        /// <param name="TargetDir">Target location</param>
+        /// <param name="recursionLvl">Recursivity level (default = 0)</param>
         public void Uploader(string SourceDir, string TargetDir, int recursionLvl)
         {
             const int HowDeepToScan = 999999999;            
@@ -836,9 +690,70 @@ namespace DinoDoc
                     Last.TotalFiles++;
                     Last.ComputedFileFolder = "file: " + fileName;
 
-                    backgroundWorker.ReportProgress(Last.TotalFiles + Last.TotalFolders); 
+                    // backgroundWorker.ReportProgress(Last.TotalFiles + Last.TotalFolders);
+                    
+                    //
+                    //   This will determine how to handle according to Program Options
+                    //
+                    //      - Overwrite Options
+                    //      - Handling of Renamed File using the FixName() function               
+                    //
 
-                    UploadDocument(fileName, TargetDir + @"/" + System.IO.Path.GetFileName(fileName));                    
+                    string OriginalFileName = System.IO.Path.GetFileName(fileName);
+                    string FixedFileName = FixName(OriginalFileName);
+
+                    string RemotePath = System.IO.Path.GetDirectoryName(fileName);
+
+                    RemotePath = RemotePath.Replace(@"\", @"/");
+                    RemotePath = RemotePath.Replace(@":/", @"://");
+
+                    string remoteFile = TargetDir + @"/" + System.IO.Path.GetFileName(FixedFileName);
+
+                    if (Settings.Default.OptionsOverwriteFiles)
+                    {
+                        if (CheckRemoteFileExists(remoteFile))
+                        {
+                            Last.TotalFilesOverwritten++;
+                            Last.Status = "Overwritten";
+                        }
+                        else
+                        {
+                            Last.Status = OriginalFileName != FixedFileName ? "New and Renamed" : "New";
+                        }
+
+                        Last.TotalFilesRenamed = OriginalFileName == FixedFileName ? Last.TotalFilesRenamed : Last.TotalFilesRenamed + 1;
+
+                        UploadDocument(fileName, remoteFile);
+                    }
+                    else
+                    {
+                        if (CheckRemoteFileExists(remoteFile))
+                        {
+                            Last.Status = "Skipped";
+                            Last.TotalFilesSkipped++;
+
+                            string[] liRow = { System.IO.Path.GetFileName(fileName), remoteFile, Last.Status };
+
+                            lvStatus.Invoke((MethodInvoker)delegate()
+                                {
+                                    lvStatus.Items.Add(fileName).SubItems.AddRange(liRow);
+                                }
+                            );
+
+                            Last.LogSelectionFont = new Font("Lucida Console", 9f, FontStyle.Regular);
+                            Last.LogSelectionColor = Color.DarkBlue;
+                            Last.LogStatus = "skipped = " + fileName + "\n";
+
+                            backgroundWorker.ReportProgress(Last.TotalFiles + Last.TotalFolders);
+                        }
+                        else
+                        {                            
+                            Last.Status = OriginalFileName != FixedFileName ? "New and Renamed" : "New";
+                            Last.TotalFilesRenamed = OriginalFileName == FixedFileName ? Last.TotalFilesRenamed : Last.TotalFilesRenamed + 1;
+
+                            UploadDocument(fileName, remoteFile);
+                        }                        
+                    }
                 }
 
                 //
@@ -864,9 +779,7 @@ namespace DinoDoc
                         string FixedName = FixName(System.IO.Path.GetFileName(subdir));
                         string DirName = FixName(System.IO.Path.GetFileName(subdir));
 
-                        Last.ComputedFileFolder = "folder: " + DirName;
-
-                        backgroundWorker.ReportProgress(Last.TotalFiles + Last.TotalFolders); 
+                        Last.ComputedFileFolder = "folder: " + DirName;                        
 
                         resultCode = CreateWebDAVFolder(TargetDir + @"/" + DirName);
 
@@ -883,23 +796,6 @@ namespace DinoDoc
                             Last.LogStatus = "\n" + new string('-', 28 + DirName.Length) + "\n" +
                                              "---- FOLDER ALREADY EXISTS: " + DirName + "\n" +
                                              new string('-', 28 + DirName.Length) + "\n\n";
-
-
-                            //string[] liRow = { "", System.IO.Path.GetFileName(DirName), "Folder Already Exists" };
-
-                            //lvStatus.Items.Add(DirName).SubItems.AddRange(liRow);
-
-                            //LogStatus.SelectionFont = new Font("Lucida Console", 9f, FontStyle.Regular);
-                            //LogStatus.SelectionColor = Color.Blue;
-
-                            //LogStatus.AppendText(
-                            //                        "\n" + new string('-', 28 + DirName.Length) + "\n" +
-                            //                        "---- FOLDER ALREADY EXISTS: " + DirName + "\n" +
-                            //                        new string('-', 28 + DirName.Length) + "\n\n"
-                            //);
-
-                            //LogStatus.SelectionFont = new Font("Lucida Console", 9f, FontStyle.Regular);
-                            //LogStatus.SelectionColor = Color.Black;
                         }
                         else
                         {
@@ -910,8 +806,6 @@ namespace DinoDoc
                                 Last.ListMsg = "";
                                 Last.ListDir = subdir;
                                 Last.ListRow = liRow;
-
-                                //lvStatus.Items.Add(subdir).SubItems.AddRange(liRow);
                             }
                             else
                             {
@@ -920,8 +814,6 @@ namespace DinoDoc
                                 Last.ListMsg = "";
                                 Last.ListDir = subdir;
                                 Last.ListRow = liRow;
-
-                                //lvStatus.Items.Add(subdir).SubItems.AddRange(liRow);
                             }
 
                             Last.LogSelectionFont = new Font("Lucida Console", 9f, FontStyle.Regular);
@@ -929,24 +821,13 @@ namespace DinoDoc
                             Last.LogStatus = "\n" + new string('-', 18 + DirName.Length) + "\n" +
                                              "---- NEW FOLDER: " + DirName + "\n" +
                                              new string('-', 18 + DirName.Length) + "\n\n";
-
-
-                            //LogStatus.SelectionFont = new Font("Lucida Console", 9f, FontStyle.Regular);
-                            //LogStatus.SelectionColor = Color.Blue;
-
-                            //LogStatus.AppendText(
-                            //                       "\n" + new string('-', 18 + DirName.Length) + "\n" +
-                            //                       "---- NEW FOLDER: " + DirName + "\n" +
-                            //                       new string('-', 18 + DirName.Length) + "\n\n"
-                            //);
-
-                            //LogStatus.SelectionFont = new Font("Lucida Console", 9f, FontStyle.Regular);
-                            //LogStatus.SelectionColor = Color.Black;
                         }
+
+                        backgroundWorker.ReportProgress(Last.TotalFiles + Last.TotalFolders); 
 
                         Uploader(subdir, TargetDir + @"/" + DirName, recursionLvl + 1);
                     }
-                }
+                }                
             }
 
             if (backgroundWorker.CancellationPending)
@@ -969,14 +850,14 @@ namespace DinoDoc
             txtSourcePath.Text = flSourceDig.SelectedPath;
         }
 
-        private void rdProvide_CheckedChanged(object sender, EventArgs e)
+        private void rdCredentialsSupply_CheckedChanged(object sender, EventArgs e)
         {
             txtUserPassword.Enabled = true;
             txtUserName.Enabled = true;
             txtUserDomain.Enabled = true;
         }
 
-        private void rdDefault_CheckedChanged(object sender, EventArgs e)
+        private void rdCredentialsDefault_CheckedChanged(object sender, EventArgs e)
         {
             txtUserPassword.Enabled = false;
             txtUserName.Enabled = false;
@@ -1091,7 +972,7 @@ namespace DinoDoc
                 Last.OperationAborted = false;
                 Last.LogStatus = "";
                 Last.LogSelectionFont = new Font("Lucida Console", 9f, FontStyle.Regular);
-                Last.LogSelectionColor = Color.Black;
+                Last.LogSelectionColor = Color.Blue;
 
                 Last.ComputedFiles = 0;
                 Last.ComputedFolders = 0;
@@ -1100,6 +981,8 @@ namespace DinoDoc
                 Last.TotalFolders = 0;
                 Last.TotalFiles = 0;
                 Last.TotalFilesRenamed = 0;
+                Last.TotalFilesSkipped = 0;
+                Last.TotalFilesOverwritten = 0;
                 Last.TotalFailures = 0;
 
                 Last.ListDir = "";
@@ -1135,14 +1018,14 @@ namespace DinoDoc
         }
 
         private void backgroundWorker_ProgressChanged(object sender, ProgressChangedEventArgs e)
-        {            
+        {
             LogStatus.SelectionFont = Last.LogSelectionFont;
             LogStatus.SelectionColor = Last.LogSelectionColor;
 
             LogStatus.AppendText(Last.LogStatus);
 
             LogStatus.SelectionFont = new Font("Lucida Console", 9f, FontStyle.Regular);
-            LogStatus.SelectionColor = Color.Black;
+            LogStatus.SelectionColor = Color.Blue;
 
             StatusLabel.Text = "Item: " + e.ProgressPercentage.ToString() + " of " + (Last.ComputedFiles + Last.ComputedFolders).ToString() + "  -  Processing " + Last.ComputedFileFolder;
             
@@ -1177,11 +1060,13 @@ namespace DinoDoc
                     "Folders Processed...: " + Last.TotalFolders.ToString() + "\n" +
                     "Files Processed.....: " + Last.TotalFiles.ToString() + "\n" +
                     "Files Renamed.......: " + Last.TotalFilesRenamed.ToString() + "\n" +
+                    "Files Skipped.......: " + Last.TotalFilesSkipped.ToString() + "\n" +
+                    "Files Overwritten...: " + Last.TotalFilesOverwritten + "\n" +
                     "Failures............: " + Last.TotalFailures.ToString() + "\n"
             );
 
             LogStatus.SelectionFont = new Font("Lucida Console", 9f, FontStyle.Regular);
-            LogStatus.SelectionColor = Color.Black; ;
+            LogStatus.SelectionColor = Color.Blue; ;
 
             TextWriter tw = new StreamWriter("Last Operation.rtf");
 

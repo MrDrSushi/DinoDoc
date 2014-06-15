@@ -86,18 +86,6 @@ namespace DinoDoc.Properties {
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("False")]
-        public bool OptionsUseLogicalAND {
-            get {
-                return ((bool)(this["OptionsUseLogicalAND"]));
-            }
-            set {
-                this["OptionsUseLogicalAND"] = value;
-            }
-        }
-        
-        [global::System.Configuration.UserScopedSettingAttribute()]
-        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("False")]
         public bool OptionsUseClaimsAuthentication {
             get {
                 return ((bool)(this["OptionsUseClaimsAuthentication"]));
@@ -200,6 +188,18 @@ namespace DinoDoc.Properties {
             }
             set {
                 this["WindowMinimized"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("300")]
+        public decimal OptionsTimeOut {
+            get {
+                return ((decimal)(this["OptionsTimeOut"]));
+            }
+            set {
+                this["OptionsTimeOut"] = value;
             }
         }
     }

@@ -156,8 +156,6 @@ namespace DinoDoc
             tvcFile.Width = Settings.Default.TreeViewFile;
             tvcTarget.Width = Settings.Default.TreeViewTarget;
             tvcStatus.Width = Settings.Default.TreeViewStatus;
-
-            rdCredentialsSupply_CheckedChanged(sender, e);
         }
 
         /// <summary>

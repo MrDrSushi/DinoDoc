@@ -252,7 +252,6 @@
             this.txtUserPassword.Name = "txtUserPassword";
             this.txtUserPassword.Size = new System.Drawing.Size(140, 20);
             this.txtUserPassword.TabIndex = 5;
-            this.txtUserPassword.Text = "P@ssword";
             this.txtUserPassword.UseSystemPasswordChar = true;
             // 
             // txtUserName
@@ -263,17 +262,14 @@
             this.txtUserName.Name = "txtUserName";
             this.txtUserName.Size = new System.Drawing.Size(140, 20);
             this.txtUserName.TabIndex = 3;
-            this.txtUserName.Text = "sp_admin";
             // 
             // rdCredentialsSupply
             // 
             this.rdCredentialsSupply.AutoSize = true;
-            this.rdCredentialsSupply.Checked = true;
             this.rdCredentialsSupply.Location = new System.Drawing.Point(199, 0);
             this.rdCredentialsSupply.Name = "rdCredentialsSupply";
             this.rdCredentialsSupply.Size = new System.Drawing.Size(57, 17);
             this.rdCredentialsSupply.TabIndex = 1;
-            this.rdCredentialsSupply.TabStop = true;
             this.rdCredentialsSupply.Text = "S&upply";
             this.rdCredentialsSupply.UseVisualStyleBackColor = true;
             this.rdCredentialsSupply.CheckedChanged += new System.EventHandler(this.rdCredentialsSupply_CheckedChanged);
@@ -281,10 +277,12 @@
             // rdCredentialsDefault
             // 
             this.rdCredentialsDefault.AutoSize = true;
+            this.rdCredentialsDefault.Checked = true;
             this.rdCredentialsDefault.Location = new System.Drawing.Point(139, 0);
             this.rdCredentialsDefault.Name = "rdCredentialsDefault";
             this.rdCredentialsDefault.Size = new System.Drawing.Size(59, 17);
             this.rdCredentialsDefault.TabIndex = 0;
+            this.rdCredentialsDefault.TabStop = true;
             this.rdCredentialsDefault.Text = "D&efault";
             this.rdCredentialsDefault.UseVisualStyleBackColor = true;
             this.rdCredentialsDefault.CheckedChanged += new System.EventHandler(this.rdCredentialsDefault_CheckedChanged);
@@ -426,7 +424,7 @@
             this.txtDestinationURL.Name = "txtDestinationURL";
             this.txtDestinationURL.Size = new System.Drawing.Size(595, 20);
             this.txtDestinationURL.TabIndex = 6;
-            this.txtDestinationURL.Text = "http://stark/Shared Documents";
+            this.txtDestinationURL.Text = "http://servername/foldername";
             // 
             // lbDesPath
             // 
@@ -463,7 +461,6 @@
             this.txtSourcePath.Name = "txtSourcePath";
             this.txtSourcePath.Size = new System.Drawing.Size(547, 20);
             this.txtSourcePath.TabIndex = 3;
-            this.txtSourcePath.Text = "c:\\temp";
             // 
             // lbSource
             // 
@@ -486,7 +483,7 @@
             this.LogStatus.Location = new System.Drawing.Point(1, 1);
             this.LogStatus.Name = "LogStatus";
             this.LogStatus.ReadOnly = true;
-            this.LogStatus.Size = new System.Drawing.Size(1135, 114);
+            this.LogStatus.Size = new System.Drawing.Size(1135, 115);
             this.LogStatus.TabIndex = 10;
             this.LogStatus.Text = "";
             this.LogStatus.WordWrap = false;

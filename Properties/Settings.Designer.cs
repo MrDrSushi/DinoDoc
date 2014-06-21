@@ -202,5 +202,41 @@ namespace DinoDoc.Properties {
                 this["OptionsTimeOut"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("<> Different")]
+        public string OptionsOverwriteSizeOperator {
+            get {
+                return ((string)(this["OptionsOverwriteSizeOperator"]));
+            }
+            set {
+                this["OptionsOverwriteSizeOperator"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("<> Different")]
+        public string OptionsOverwriteDateOperator {
+            get {
+                return ((string)(this["OptionsOverwriteDateOperator"]));
+            }
+            set {
+                this["OptionsOverwriteDateOperator"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("")]
+        public string OptionsOverwriteLogicalOperator {
+            get {
+                return ((string)(this["OptionsOverwriteLogicalOperator"]));
+            }
+            set {
+                this["OptionsOverwriteLogicalOperator"] = value;
+            }
+        }
     }
 }

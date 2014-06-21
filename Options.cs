@@ -29,6 +29,10 @@ namespace DinoDoc
             Settings.Default.OptionsUseFileSize = chkFileSize.Checked;
             Settings.Default.OptionsUseFileDate = chkFileDate.Checked;
 
+            Settings.Default.OptionsOverwriteDateOperator = cmbDateOptions.SelectedItem.ToString();
+            Settings.Default.OptionsOverwriteSizeOperator = cmbSizeOptions.SelectedItem.ToString();
+            Settings.Default.OptionsOverwriteLogicalOperator = cmbLogicalOptions.SelectedItem.ToString();
+
             Settings.Default.OptionsUseClaimsAuthentication = chkClaimsAuthentication.Checked;
             Settings.Default.OptionsAuthenticationMethod = rbAuthenticationMethod_PUT.Checked ? "PUT" : "POST";
             Settings.Default.OptionsTimeOut = numericTimeout.Value;
@@ -49,6 +53,10 @@ namespace DinoDoc
             chkFileSize.Checked = Settings.Default.OptionsUseFileSize;
             chkFileDate.Checked = Settings.Default.OptionsUseFileDate;
 
+            cmbDateOptions.SelectedItem = Settings.Default.OptionsOverwriteDateOperator;
+            cmbSizeOptions.SelectedItem = Settings.Default.OptionsOverwriteSizeOperator;
+            cmbLogicalOptions.SelectedItem = Settings.Default.OptionsOverwriteLogicalOperator;
+
             chkClaimsAuthentication.Checked = Settings.Default.OptionsUseClaimsAuthentication;
 
             rbAuthenticationMethod_PUT.Checked = Settings.Default.OptionsAuthenticationMethod == "PUT";
@@ -63,6 +71,11 @@ namespace DinoDoc
         {
             chkFileSize.Enabled = chkOverwriteFiles.Checked;
             chkFileDate.Enabled = chkOverwriteFiles.Checked;
+            
+            cmbSizeOptions.Enabled = chkOverwriteFiles.Checked;
+            cmbDateOptions.Enabled = chkOverwriteFiles.Checked;
+
+            cmbLogicalOptions.Enabled = chkOverwriteFiles.Checked;
         }
 
         private void numericTimeout_ValueChanged(object sender, EventArgs e)

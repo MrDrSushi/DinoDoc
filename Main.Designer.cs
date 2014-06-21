@@ -39,9 +39,9 @@
             this.tvcTarget = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.tvcStatus = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.ContextMenuLog = new System.Windows.Forms.ContextMenuStrip(this.components);
-            this.ContextMenuLog_SaveLog = new System.Windows.Forms.ToolStripMenuItem();
-            this.toolStripSeparator6 = new System.Windows.Forms.ToolStripSeparator();
             this.toolStrip_clearAllLogs = new System.Windows.Forms.ToolStripMenuItem();
+            this.toolStripSeparator6 = new System.Windows.Forms.ToolStripSeparator();
+            this.ContextMenuLog_SaveLog = new System.Windows.Forms.ToolStripMenuItem();
             this.grpboxAuthentication = new System.Windows.Forms.GroupBox();
             this.label1 = new System.Windows.Forms.Label();
             this.label3 = new System.Windows.Forms.Label();
@@ -165,32 +165,32 @@
             // ContextMenuLog
             // 
             this.ContextMenuLog.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.ContextMenuLog_SaveLog,
+            this.toolStrip_clearAllLogs,
             this.toolStripSeparator6,
-            this.toolStrip_clearAllLogs});
+            this.ContextMenuLog_SaveLog});
             this.ContextMenuLog.Name = "contextMenuStrip";
             this.ContextMenuLog.Size = new System.Drawing.Size(131, 54);
-            // 
-            // ContextMenuLog_SaveLog
-            // 
-            this.ContextMenuLog_SaveLog.Image = global::DinoDoc.Properties.Resources.Edit_Save;
-            this.ContextMenuLog_SaveLog.Name = "ContextMenuLog_SaveLog";
-            this.ContextMenuLog_SaveLog.Size = new System.Drawing.Size(130, 22);
-            this.ContextMenuLog_SaveLog.Text = "Save Log...";
-            this.ContextMenuLog_SaveLog.Click += new System.EventHandler(this.MenuFile_SaveLog_Click);
-            // 
-            // toolStripSeparator6
-            // 
-            this.toolStripSeparator6.Name = "toolStripSeparator6";
-            this.toolStripSeparator6.Size = new System.Drawing.Size(127, 6);
             // 
             // toolStrip_clearAllLogs
             // 
             this.toolStrip_clearAllLogs.Image = global::DinoDoc.Properties.Resources.Edit_Clear;
             this.toolStrip_clearAllLogs.Name = "toolStrip_clearAllLogs";
             this.toolStrip_clearAllLogs.Size = new System.Drawing.Size(130, 22);
-            this.toolStrip_clearAllLogs.Text = "Clear Logs";
+            this.toolStrip_clearAllLogs.Text = "&Clear Logs";
             this.toolStrip_clearAllLogs.Click += new System.EventHandler(this.MenuFile_ClearLogs_Clicks);
+            // 
+            // toolStripSeparator6
+            // 
+            this.toolStripSeparator6.Name = "toolStripSeparator6";
+            this.toolStripSeparator6.Size = new System.Drawing.Size(127, 6);
+            // 
+            // ContextMenuLog_SaveLog
+            // 
+            this.ContextMenuLog_SaveLog.Image = global::DinoDoc.Properties.Resources.Edit_Save;
+            this.ContextMenuLog_SaveLog.Name = "ContextMenuLog_SaveLog";
+            this.ContextMenuLog_SaveLog.Size = new System.Drawing.Size(130, 22);
+            this.ContextMenuLog_SaveLog.Text = "&Save Log...";
+            this.ContextMenuLog_SaveLog.Click += new System.EventHandler(this.MenuFile_SaveLog_Click);
             // 
             // grpboxAuthentication
             // 
@@ -329,7 +329,7 @@
             this.MenuFile_SaveLog.Name = "MenuFile_SaveLog";
             this.MenuFile_SaveLog.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.S)));
             this.MenuFile_SaveLog.Size = new System.Drawing.Size(170, 22);
-            this.MenuFile_SaveLog.Text = "Save &Log...";
+            this.MenuFile_SaveLog.Text = "&Save Log...";
             this.MenuFile_SaveLog.Click += new System.EventHandler(this.MenuFile_SaveLog_Click);
             // 
             // toolStripSeparator1
@@ -420,6 +420,11 @@
             this.txtDestinationURL.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
+            this.txtDestinationURL.AutoCompleteCustomSource.AddRange(new string[] {
+            "http://",
+            "https://"});
+            this.txtDestinationURL.AutoCompleteMode = System.Windows.Forms.AutoCompleteMode.Suggest;
+            this.txtDestinationURL.AutoCompleteSource = System.Windows.Forms.AutoCompleteSource.HistoryList;
             this.txtDestinationURL.Location = new System.Drawing.Point(116, 73);
             this.txtDestinationURL.Name = "txtDestinationURL";
             this.txtDestinationURL.Size = new System.Drawing.Size(595, 20);
@@ -457,6 +462,8 @@
             this.txtSourcePath.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
+            this.txtSourcePath.AutoCompleteMode = System.Windows.Forms.AutoCompleteMode.SuggestAppend;
+            this.txtSourcePath.AutoCompleteSource = System.Windows.Forms.AutoCompleteSource.FileSystemDirectories;
             this.txtSourcePath.Location = new System.Drawing.Point(117, 36);
             this.txtSourcePath.Name = "txtSourcePath";
             this.txtSourcePath.Size = new System.Drawing.Size(547, 20);
@@ -483,7 +490,7 @@
             this.LogStatus.Location = new System.Drawing.Point(1, 1);
             this.LogStatus.Name = "LogStatus";
             this.LogStatus.ReadOnly = true;
-            this.LogStatus.Size = new System.Drawing.Size(1135, 115);
+            this.LogStatus.Size = new System.Drawing.Size(1134, 115);
             this.LogStatus.TabIndex = 10;
             this.LogStatus.Text = "";
             this.LogStatus.WordWrap = false;

@@ -116,6 +116,8 @@ namespace DinoDoc
             aProp.SetValue(c, true, null);
         }
 
+        // ====================================================================================================== Form Events
+
         /// <summary>
         /// Main routine of the program
         /// </summary>
@@ -195,6 +197,8 @@ namespace DinoDoc
             Settings.Default.Save();
         }
 
+        // ====================================================================================================== General Functions
+
         /// <summary>
         /// Classify and count the items to be uploaded, this sorts out the total of files and folders
         /// </summary>
@@ -210,7 +214,7 @@ namespace DinoDoc
 
                 Last.ComputedFiles += fileEntries.Count();
 
-                StatusLabel.Text = "Discovering Files: " + Last.ComputedFiles.ToString() + "... so far";
+                StatusLabel.Text = "Discovering items... " + Last.ComputedFiles.ToString() + "... found";
 
                 string[] subdirEntries = Directory.GetDirectories(SourceDir);
 
@@ -229,73 +233,6 @@ namespace DinoDoc
                 }
             }
 
-        }
-
-        /// <summary>
-        /// Desconstructs the original file name replacing the illegal characters and reconstructs a new file name using "_" 
-        /// </summary>
-        /// <param name="FileName">Original File Name</param>
-        /// <returns>Returns the new File Name compatible with SharePoint standards</returns>
-        private static string FixName(string FileName)
-        {
-            //
-            // list of invalid characters:     ~ " # % & * : < > ? / \ { | }
-            //            
-
-            RegexOptions none = RegexOptions.None;
-            Regex regex = new Regex("[\"#%&*:.<>?\\\\{|}~\\r\\n]", none);
-
-            string replacement = "_";
-            string FileExtension = System.IO.Path.GetExtension(FileName);
-            string txtExp = regex.Replace(System.IO.Path.GetFileNameWithoutExtension(FileName), replacement);
-
-            int length = 0;
-
-            if (txtExp.Length > 0x7f)
-            {
-                length = 0x7f;
-            }
-            else
-            {
-                length = txtExp.Length;
-            }
-
-            return txtExp.Substring(0, length) + FileExtension;
-        }
-
-        /// <summary>
-        /// Checks if a files exists on the remote server  ------------- FAILURE: 404 NOT AUTHORIZED? NOT FOUND?
-        /// </summary>
-        /// <param name="FileNameAndLocation">The current Web Request in use pointing to the remote file on the server</param>
-        /// <returns>Returns True if the file is found, False otherwise</returns>
-        public bool CheckRemoteFileExists(string FileNameAndLocation)
-        {
-            try
-            {
-                WebRequest request = WebRequest.Create(FileNameAndLocation);
-                
-                request.Method = "HEAD";
-                request.Timeout = Decimal.ToInt32(Settings.Default.OptionsTimeOut * 10000);
-
-                if (rdCredentialsDefault.Checked == true)
-                {
-                    request.Credentials = CredentialCache.DefaultCredentials;
-                }
-                else if ((txtUserName.Text.Length > 0) && (txtUserPassword.Text.Length > 0))
-                {
-                    request.Credentials = new System.Net.NetworkCredential(txtUserName.Text.Trim(), txtUserPassword.Text.Trim(), txtUserDomain.Text.Trim());
-                }
-
-                request.CachePolicy = new RequestCachePolicy(RequestCacheLevel.NoCacheNoStore);
-
-                var response = request.GetResponse() as HttpWebResponse;
-
-                return (response.StatusCode == HttpStatusCode.OK);
-            }
-            catch (WebException)
-            {
-                return false;
-            }
         }
 
         /// <summary>
@@ -344,20 +281,93 @@ namespace DinoDoc
         }
 
         /// <summary>
+        /// Desconstructs the original file name replacing the illegal characters and reconstructs a new file name using "_" 
+        /// </summary>
+        /// <param name="FileName">Original File Name</param>
+        /// <returns>Returns the new File Name compatible with SharePoint standards</returns>
+        private static string FixName(string FileName)
+        {
+            //
+            // list of invalid characters:     ~ " # % & * : < > ? / \ { | }
+            //            
+
+            RegexOptions none = RegexOptions.None;
+            Regex regex = new Regex("[\"#%&*:.<>?\\\\{|}~\\r\\n]", none);
+
+            string replacement = "_";
+            string FileExtension = System.IO.Path.GetExtension(FileName);
+            string txtExp = regex.Replace(System.IO.Path.GetFileNameWithoutExtension(FileName), replacement);
+
+            int length = 0;
+
+            if (txtExp.Length > 0x7f)
+            {
+                length = 0x7f;
+            }
+            else
+            {
+                length = txtExp.Length;
+            }
+
+            return txtExp.Substring(0, length) + FileExtension;
+        }
+
+        /// <summary>
+        /// Checks if a files exists on the remote server
+        /// </summary>
+        /// <param name="FileNameAndLocation">The current Web Request in use pointing to the remote file on the server</param>
+        /// <returns>Returns True if the file is found, False otherwise</returns>
+        public bool CheckRemoteFileExists(string FileNameAndLocation)
+        {
+            try
+            {
+                WebRequest request = WebRequest.Create(FileNameAndLocation);
+
+                request.Method = "HEAD";
+                request.Timeout = Decimal.ToInt32(Settings.Default.OptionsTimeOut * 10000);
+
+                if (Settings.Default.OptionsUseClaimsAuthentication)
+                {
+                    request.Headers.Add("X-FORMS_BASED_AUTH_ACCEPTED", "f");
+                }
+
+                if (rdCredentialsDefault.Checked == true)
+                {
+                    request.Credentials = CredentialCache.DefaultCredentials;
+                }
+                else if ((txtUserName.Text.Length > 0) && (txtUserPassword.Text.Length > 0))
+                {
+                    request.Credentials = new System.Net.NetworkCredential(txtUserName.Text.Trim(), txtUserPassword.Text.Trim(), txtUserDomain.Text.Trim());
+                }
+
+                request.CachePolicy = new RequestCachePolicy(RequestCacheLevel.NoCacheNoStore);
+
+                var response = request.GetResponse() as HttpWebResponse;
+
+                return (response.StatusCode == HttpStatusCode.OK);
+            }
+            catch (WebException)
+            {
+                return false;
+            }
+        }
+
+        /// <summary>
         /// Returns the File Size from a file located on a remote server
         /// </summary>
         /// <param name="FileNameAndLocation">The file name and remote location</param>
         /// <returns>returns the File Size</returns>
         public long GetRemoteFileSize(string FileNameAndLocation)
-        {
-            WebHeaderCollection headers;
-            HttpWebResponse response;
+        {            
+            WebRequest request = WebRequest.Create(FileNameAndLocation);
 
-            HttpWebRequest request = (HttpWebRequest)WebRequest.Create(FileNameAndLocation);
+            request.Method = "HEAD";
+            request.Timeout = Decimal.ToInt32(Settings.Default.OptionsTimeOut * 10000);
 
-            //
-            //   Send the credentials before calling for the response()
-            //
+            if (Settings.Default.OptionsUseClaimsAuthentication)
+            {
+                request.Headers.Add("X-FORMS_BASED_AUTH_ACCEPTED", "f");
+            }
 
             if (rdCredentialsDefault.Checked == true)
             {
@@ -368,22 +378,10 @@ namespace DinoDoc
                 request.Credentials = new System.Net.NetworkCredential(txtUserName.Text.Trim(), txtUserPassword.Text.Trim(), txtUserDomain.Text.Trim());
             }
 
-            //
-            //   Use Claims Authentication
-            //
-
-            if (Settings.Default.OptionsUseClaimsAuthentication)
-            {
-                request.Headers.Add("X-FORMS_BASED_AUTH_ACCEPTED", "f");
-            }
-
-            request.Method = "HEAD";
-
             try
             {
-                response = request.GetResponse() as HttpWebResponse;
-
-                headers = response.Headers;
+                WebResponse response = request.GetResponse();    // as HttpWebResponse;
+                WebHeaderCollection headers = response.Headers;
 
                 if (response != null)
                 {
@@ -408,14 +406,15 @@ namespace DinoDoc
         /// <returns></returns>
         public DateTime GetRemoteFileDate(string FileNameAndLocation)
         {
-            WebHeaderCollection headers;
-            HttpWebResponse response;
+            WebRequest request = WebRequest.Create(FileNameAndLocation);
 
-            HttpWebRequest request = (HttpWebRequest)WebRequest.Create(FileNameAndLocation);
+            request.Method = "HEAD";
+            request.Timeout = Decimal.ToInt32(Settings.Default.OptionsTimeOut * 10000);
 
-            //
-            //   Send the credentials before calling for the response()
-            //
+            if (Settings.Default.OptionsUseClaimsAuthentication)
+            {
+                request.Headers.Add("X-FORMS_BASED_AUTH_ACCEPTED", "f");
+            }
 
             if (rdCredentialsDefault.Checked == true)
             {
@@ -424,24 +423,13 @@ namespace DinoDoc
             else if ((txtUserName.Text.Length > 0) && (txtUserPassword.Text.Length > 0))
             {
                 request.Credentials = new System.Net.NetworkCredential(txtUserName.Text.Trim(), txtUserPassword.Text.Trim(), txtUserDomain.Text.Trim());
-            }
+            };
 
-            //
-            //   Use Claims Authentication
-            //
-
-            if (Settings.Default.OptionsUseClaimsAuthentication)
-            {
-                request.Headers.Add("X-FORMS_BASED_AUTH_ACCEPTED", "f");
-            }
-
-            request.Method = "HEAD";
 
             try
             {
-                response = request.GetResponse() as HttpWebResponse;
-
-                headers = response.Headers;
+                WebResponse response = request.GetResponse();    // as HttpWebResponse;
+                WebHeaderCollection headers = response.Headers;
 
                 if (response != null)
                 {
@@ -462,13 +450,13 @@ namespace DinoDoc
         /// <summary>
         /// CreateWebDAVFolder - this function will create a new folder in a site collection
         /// </summary>
-        /// <param name="remoteFolderName"></param>
+        /// <param name="FileNameAndLocation"></param>
         /// <returns></returns>
-        public HttpStatusCode CreateWebDAVFolder(string remoteFolderName)
+        public HttpStatusCode CreateWebDAVFolder(string FileNameAndLocation)
         {
-            remoteFolderName = remoteFolderName.Replace("\\", "/");
+            FileNameAndLocation = FileNameAndLocation.Replace("\\", "/");
 
-            Uri myURI = new Uri(remoteFolderName);
+            Uri myURI = new Uri(FileNameAndLocation);
 
             WebRequest request = WebRequest.Create(myURI);
 
@@ -638,7 +626,7 @@ namespace DinoDoc
 
                 Last.LogSelectionFont = new Font("Lucida Console", 9f, FontStyle.Regular);
                 Last.LogSelectionColor = Color.DarkBlue;
-                Last.LogStatus = "OK      = " + localFile + "\n";                
+                Last.LogStatus = "OK      = " + localFile + "\n";
             }
             catch (Exception ex)
             {
@@ -687,8 +675,6 @@ namespace DinoDoc
 
                     Last.TotalFiles++;
                     Last.ComputedFileFolder = "file: " + fileName;
-
-                    // backgroundWorker.ReportProgress(Last.TotalFiles + Last.TotalFolders);
                     
                     //
                     //   This will determine how to handle according to Program Options
@@ -707,6 +693,33 @@ namespace DinoDoc
 
                     string remoteFile = TargetDir + @"/" + System.IO.Path.GetFileName(FixedFileName);
 
+                    //  - test for program options
+
+                    /*
+                    if (Settings.Default.OptionsOverwriteFiles)
+                    {
+                        if (Settings.Default.OptionsOverwriteLogicalOperator == "AND")
+                        {
+                            long RemoteFileSize = GetRemoteFileSize("file");
+                            long LocalFileSize = GetLocalFileSize("file");
+                            
+                            DateTime RemoteFileDate = GetRemoteFileDate("file");
+                            DateTime LocalFileDate =  GetLocalFileDate("file");
+
+                            if (RemoteFileSize != LocalFileSize  &&  RemoteFileDate != LocalFileDate)
+                            {
+
+                            }
+                        }
+                        else
+                        {
+
+                        }
+                    }
+                    */
+
+                    //  - regular functional portion
+
                     if (Settings.Default.OptionsOverwriteFiles)
                     {
                         if (CheckRemoteFileExists(remoteFile))
@@ -721,7 +734,30 @@ namespace DinoDoc
 
                         Last.TotalFilesRenamed = OriginalFileName == FixedFileName ? Last.TotalFilesRenamed : Last.TotalFilesRenamed + 1;
 
-                        UploadDocument(fileName, remoteFile);
+                        //
+                        //  Determines the Simulation mode
+                        //
+
+                        if (Settings.Default.OptionsSimulationMode)
+                        {
+                            string[] liRow = { System.IO.Path.GetFileName(fileName), remoteFile, Last.Status };
+
+                            lvStatus.Invoke((MethodInvoker)delegate()
+                                {
+                                    lvStatus.Items.Add(fileName).SubItems.AddRange(liRow);
+                                }
+                            );
+
+                            Last.LogSelectionFont = new Font("Lucida Console", 9f, FontStyle.Regular);
+                            Last.LogSelectionColor = Color.DarkBlue;
+                            Last.LogStatus = "OK      = " + fileName + "\n";
+
+                            backgroundWorker.ReportProgress(Last.TotalFiles + Last.TotalFolders);
+                        }
+                        else
+                        {
+                            UploadDocument(fileName, remoteFile);
+                        }
                     }
                     else
                     {
@@ -749,7 +785,30 @@ namespace DinoDoc
                             Last.Status = OriginalFileName != FixedFileName ? "New and Renamed" : "New";
                             Last.TotalFilesRenamed = OriginalFileName == FixedFileName ? Last.TotalFilesRenamed : Last.TotalFilesRenamed + 1;
 
-                            UploadDocument(fileName, remoteFile);
+                            //
+                            //  Determines the Simulation mode
+                            //
+
+                            if (Settings.Default.OptionsSimulationMode)
+                            {
+                                string[] liRow = { System.IO.Path.GetFileName(fileName), remoteFile, Last.Status };
+
+                                lvStatus.Invoke((MethodInvoker)delegate()
+                                    {
+                                        lvStatus.Items.Add(fileName).SubItems.AddRange(liRow);
+                                    }
+                                );
+
+                                Last.LogSelectionFont = new Font("Lucida Console", 9f, FontStyle.Regular);
+                                Last.LogSelectionColor = Color.DarkBlue;
+                                Last.LogStatus = "OK      = " + fileName + "\n";
+
+                                backgroundWorker.ReportProgress(Last.TotalFiles + Last.TotalFolders);
+                            }
+                            else
+                            {
+                                UploadDocument(fileName, remoteFile);
+                            }
                         }                        
                     }
                 }
@@ -950,6 +1009,17 @@ namespace DinoDoc
 
             if (txtDestinationURL.Text.Length > 0 && txtSourcePath.Text.Length > 0)
             {
+                // 
+                //  TO-DO:  
+                //
+                //  1) regex to validate the URL:  '/^(https?|http):\/\/.+$/igm'  = catches the url at any format for http/https
+                //
+
+                if (!Uri.IsWellFormedUriString(txtDestinationURL.Text.Trim(), UriKind.RelativeOrAbsolute))
+                {
+
+                }
+                
                 // disable controls to prevent unwanted interactions that may affect the current task                
 
                 txtSourcePath.Enabled = false;
@@ -964,6 +1034,7 @@ namespace DinoDoc
                 MenuFile_Print.Enabled = false;
                 MenuFile_PrintPreview.Enabled = false;
                 MenuFile_Exit.Enabled = false;
+                MenuHelp_About.Enabled = false;
                 
                 // reset the struct 
 
@@ -991,14 +1062,36 @@ namespace DinoDoc
                 btUpload.Text = "Cancel";
                 btUpload.Image = ((System.Drawing.Image)(Properties.Resources.Upload_Cancel_48x48));
                 
-                //  start uploading files
+                //
+                //  Returns Feedback for UI:
+                //
+                //  - Compute the files
+                //  - Feeds the Progress Bar with numbers
+                //  - Fires the log
+                //
 
                 ComputeItems(txtSourcePath.Text.Trim(), 0);
 
                 StripProgressBar.Visible = true;
                 StripProgressBar.Maximum = Last.ComputedFiles + Last.ComputedFolders;
 
-                backgroundWorker.RunWorkerAsync(); //    Uploader(txtSourcePath.Text.Trim(), txtDestinationURL.Text.Trim(), 0);
+                LogStatus.SelectionFont = new Font("Lucida Console", 9f, FontStyle.Regular);
+                LogStatus.SelectionColor = Color.DarkBlue;
+
+                if (Settings.Default.OptionsSimulationMode)
+                {
+                    LogStatus.AppendText("\n\nSimulation Import Process started at " + System.DateTime.Now.ToString() + "\n\n");
+                }
+                else
+                {
+                    LogStatus.AppendText("\n\nImport Process started at " + System.DateTime.Now.ToString() + "\n\n");
+                }
+
+                //
+                //  start uploading files
+                //
+
+                backgroundWorker.RunWorkerAsync();
             }
         }
 
@@ -1046,6 +1139,7 @@ namespace DinoDoc
             MenuFile_Print.Enabled = true;
             MenuFile_PrintPreview.Enabled = true;
             MenuFile_Exit.Enabled = true;
+            MenuHelp_About.Enabled = true;
 
             // wrap up everything!
 
@@ -1053,7 +1147,9 @@ namespace DinoDoc
             LogStatus.SelectionColor = Color.DarkBlue;
 
             LogStatus.AppendText(
-                    "\n\nImport Process Completed at " + String.Format("{0:MM-dd-yyyy - hh:mm:ss}", System.DateTime.Now) + "\n\n" +
+                    // "\n\nImport Process Completed at " + String.Format("{0:MM-dd-yyyy - hh:mm:ss}", System.DateTime.Now) + "\n\n" +
+
+                    "\n\n" + (Settings.Default.OptionsSimulationMode ? "SIMULATION" : "Import") + " process Completed at " + System.DateTime.Now.ToString() + "\n\n" +
 
                     "Folders Processed...: " + Last.TotalFolders.ToString() + "\n" +
                     "Files Processed.....: " + Last.TotalFiles.ToString() + "\n" +

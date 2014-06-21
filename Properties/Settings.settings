@@ -47,5 +47,14 @@
     <Setting Name="OptionsTimeOut" Type="System.Decimal" Scope="User">
       <Value Profile="(Default)">300</Value>
     </Setting>
+    <Setting Name="OptionsOverwriteSizeOperator" Type="System.String" Scope="User">
+      <Value Profile="(Default)">&lt;&gt; Different</Value>
+    </Setting>
+    <Setting Name="OptionsOverwriteDateOperator" Type="System.String" Scope="User">
+      <Value Profile="(Default)">&lt;&gt; Different</Value>
+    </Setting>
+    <Setting Name="OptionsOverwriteLogicalOperator" Type="System.String" Scope="User">
+      <Value Profile="(Default)" />
+    </Setting>
   </Settings>
 </SettingsFile>

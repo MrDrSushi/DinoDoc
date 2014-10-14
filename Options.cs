@@ -29,12 +29,18 @@ namespace DinoDoc
             Settings.Default.OptionsUseFileSize = chkFileSize.Checked;
             Settings.Default.OptionsUseFileDate = chkFileDate.Checked;
 
-            Settings.Default.OptionsOverwriteDateOperator = cmbDateOptions.SelectedItem.ToString();
-            Settings.Default.OptionsOverwriteSizeOperator = cmbSizeOptions.SelectedItem.ToString();
-            Settings.Default.OptionsOverwriteLogicalOperator = cmbLogicalOptions.SelectedItem.ToString();
+            //
+            // added checks for Null values
+            //
+
+            Settings.Default.OptionsOverwriteDateOperator = (cmbDateOptions.SelectedItem != null ? cmbDateOptions.SelectedItem.ToString() : "");
+            Settings.Default.OptionsOverwriteSizeOperator = (cmbSizeOptions.SelectedItem != null ? cmbSizeOptions.SelectedItem.ToString() : "");
+            Settings.Default.OptionsOverwriteLogicalOperator = (cmbLogicalOptions.SelectedItem != null ? cmbLogicalOptions.SelectedItem.ToString() : "");
+
+            // other options
 
             Settings.Default.OptionsUseClaimsAuthentication = chkClaimsAuthentication.Checked;
-            Settings.Default.OptionsAuthenticationMethod = rbAuthenticationMethod_PUT.Checked ? "PUT" : "POST";
+            Settings.Default.OptionsAuthenticationMethod = (rbAuthenticationMethod_PUT.Checked ? "PUT" : "POST");
             Settings.Default.OptionsTimeOut = numericTimeout.Value;
 
             Settings.Default.OptionsSimulationMode = chkSimulationMode.Checked;

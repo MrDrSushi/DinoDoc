@@ -1,6 +1,4 @@
-# DinoDoc
-
-DinoDoc is the &quot;Dynamic Input and Output for Documents&quot; used for SharePoint 2007, 2010, and 2013.
+DinoDoc is the "Dynamic Input and Output for Documents" used for SharePoint 2007, 2010, and 2013.
 
 This small and compact utility was designed to simplify the tedious &quot;batch-uploads&quot; for SharePoint, it will help any SharePoint users to move lots of files and folders to SharePoint websites preserving the original structure from source to target, and automatically
  renaming invalid files!

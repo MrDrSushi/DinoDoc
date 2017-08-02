@@ -1,0 +1,67 @@
+<div class="wikidoc">
+<h1><strong>9/29/2013 - D&oslash;d Kalm&nbsp;</strong></h1>
+<p>There was a serious turn of the tide in my life and the result was more than I could brace for, the extension of my work visa in the US was approved and later denied in my home country, the consular officer in my country didn't believe I was really employed
+ and based on their own criteria (only God knows on what they based their findings) they decided to not approve the extension for my work visa and it completely turned my life upside down, I couldnt return to the US and I got stuck without a way to go back
+ and get my things, during the past months I spent all my money paying for rent and bills in the US to keep my things safe at same time I wasn't making one single dollar because I was in my home country waiting for their decision and later I got the unfair
+ decision, which took almost 3 months to arrive.</p>
+<p>I had no way to keep busy on DinoDoc, my computer and portable hard disk with my source code were in the US and I had no access to any of them, right now I'm in Beijing looking for a job, I'm still feeling upset and disappointed with my life, I have a lot
+ of professional experience, lots of skills and I know I can do amazing things in front of a computer but I have no luck in this country so far, I'm only here because of my wife, it is her country and I had no job to take care of my family, now all I can do
+ is to use my time to work on my resume and apply for jobs, so far I had &nbsp;very disappointing job interviews and I feel really depressed living in China, it is so polluted here, the skies are always gloomy and dark, there are no clouds, no blue skies either,
+ all makes me feel down, I miss the good times, I miss working and learning day after day new things about SharePoint and all the servers connected to my SharePoint Farm.</p>
+<p>I hope someone out there pay attention to my resume and really read what I did, believe in my words, I'm a very good professional and everything written on those pages are facts not fiction, I know it will take some time, maybe a little longer here, but
+ bright days are ahead of me, I know they are coming, I just need to work harder now!</p>
+<p>I was hoping to get DinoDoc completed and start working on a new version for SharePoint 2013 this year, at least it was my goal back in April, oh boy I guess I can't do much about it right now, well... let's hope for better days!</p>
+<p>&nbsp;</p>
+<h1><strong>4/25/2013 - Back in Business!!!&nbsp;</strong></h1>
+<p>It was October 2012 when I did update this project for the last time, well I was working in chaotic and confusing environment and it was taking all my time, it was a messy environment and it took its toll, I spent lots of hours working to organize things
+ in the office, I had so much trouble with the lack of management and structural department in the organization and I decided to switch my schedule to avoid meeting unwanted &quot;tasks&quot; and find a more suitable time to organize my things and get the job done but
+ in the end I had no energy to work on my personal projects by the end of the day like I used to do and the weekend became my time to escape from the computer!</p>
+<p>I'm right now creating a new development environment and installing my development tools to carry on the development of this project, in the mean time you have a very strong and reliable version available for download, bugs fixed, new features implemented
+ and better support for claims and forms!</p>
+<p>Leave your comments and suggestions!</p>
+<p>&nbsp;</p>
+<h1><strong>October 30th - Bigger, Faster and Stronger!</strong></h1>
+<p>DinoDoc is doing pretty good on my tests and soon I will make this new version available! Right now I can share some significant improvements and what is going on in the oven while DinoDoc is cooked :)</p>
+<p>A couple of weeks ago I ran into a brick wall while test DinoDoc with an unexpected updated on IIS, for some reason DinoDoc was getting mixed HTTP error, varying from 403 and 405, it made me crazy trying to find the root of the problem and later after testing
+ everything on the book I had to stop the conventional way and use the non-sense way, which consisted of &quot;brute-force&quot; against the server and the result was awesome, I discovered that IIS servers sometimes will not be fully configured to deal with WebDav to
+ accept the method &quot;PUT&quot; and they will prefer to use &quot;POST&quot; instead, and this discovery was really significant to my little orange dinosaur :)</p>
+<p>Now I'm adding a couple of additional options to allow DinoDoc to run against different servers and let the user set the authentication mode switching between &quot;PUT&quot; and &quot;POST&quot;, I believe this will extend DinoDoc to a whole new set of functionality and it
+ will also allow me to use DinoDoc not only for SharePoint but to take this tool to future migration from Server to Server!</p>
+<p>The newest version of DinoDoc available for download still an alpha and still carrying a lot of bugs but it is more stable the previous one, more efficient and more detailed as well, the source code has more useful comments and annotations for each function
+ and range of properties, you will notice my future support for testing UAC on workstations, right now DinoDoc tries to store the configuration on the Windows Registry and I want to make this optional, some users will not have full administrative rights to
+ the workstation and the usage of Windows Registry will generate a big ugly error dialog so to prevent this to happen I will include in the dialog options from DinoDoc a &quot;where to save&quot;, to allow the user to save the options on a classical .ini file when running
+ for a USB drive or directly from its folder or to save to the registry, of course it is a little feature but saves you from an annoying error message on your screen and makes DinoDoc cooler and more versatile!</p>
+<p>&nbsp;<img src="http://download-codeplex.sec.s-msft.com/Download?ProjectName=dinodoc&DownloadId=524160" alt=""></p>
+<p>PS: There is one typo on the dialog above, well... better use the spell checker on the next build ^ ^</p>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<h1><strong>October 18th - Busy again!</strong></h1>
+<p>It's been a while since my last update, DinoDoc still a very simple and elegant tool for SharePoint and it is my duty to keep this little tool up to date and deliver what I promised! My time was somewhat short and confuse, I got carried away with my work
+ and personal life, I left a stable version of DinoDoc for available and the latest stable version was pretty good already, classic authentication and claims authentication which were the main requirements for SharePoint users varying from small to large environments.</p>
+<p>The goal now is to deliver all the goodies earlier promised and take DinoDoc to a final version, the focus now is to complete the &quot;Options&quot; dialog box which will deliver all the custom logical file operations: AND / OR / Overwrite / File Size / File Date</p>
+<p>The other main goal is to improve the feedback system for the UI, right now I'm relying on very deficient mechanism, which takes a lot of time to deliver and consumes precious amount of performance from the main thread, the goal is to replace this old fashioned
+ (to be more honest: amateur) by a Thread to empower the UI with a real time delivery system, which will accommodate another goal for this project the ability to INTERRUPT the operation once it gets started, right now if you want to stop an operation you need
+ to force DinoDoc to be canceled by Task Manager (this is totally amateur!)</p>
+<p>Stay tuned for more, the next version is already on its way!</p>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<h1><strong>What is DinoDoc?</strong></h1>
+<p>The &quot;Dynamic Input and Output for Documents&quot; utility or simply known as DinoDoc is a little tool designed for batch-uploads which will help SharePoint administrators and developers to move lots of files and folders to SharePoint websites preserving the original
+ structure from source to target without the hassle and limitations of the existing Batch Upload from the Ribbon UI!</p>
+<p>Another goal is empower end users to take the maximum advantage of SharePoint without the help from their help desk team to help them during these long and tedious operations, enabling all types of users to consistently move huge amounts of data to SharePoint.</p>
+<p>And the future goal, is to have the output from SharePoint without using &quot;Windows Explorer&quot; to perform several downloads to local and remote locations.</p>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<h1><strong>DinoDoc Features</strong></h1>
+<p>DinoDoc is easy to use, all you need to do is to point to source, target and click upload (in some cases you will need to input your user id and password) and bingo! You will see DinoDoc uploading for all your files and folders from their source path to
+ a new target destination in SharePoint.</p>
+<p>It will rename files and folders incompatible with SharePoint naming standards, so you don't need to worry about incompatibility issues, by default SharePoint rejects files and folder with special characters and it will replace these invalid characters &quot;_&quot;,
+ &nbsp;and it will also recreate the same file system structure from your local source on the destination server.</p>
+<p>All operations will be logged in your screen and you can revisit everything on a separate log file (Last Operation.RTF) which you can share with you SharePoint Administrator or Help Desk Team later, if DinoDoc get a file or folder renamed it will show the
+ log for the operation, as well for new/updated files/folders according to the options you have selected, you can drive DinoDoc to only perform a simulation without changing anything which is useful to generate an Impact Report before moving any external data
+ into your SharePoint, other options are designed to help you to upload only new files based on their dates and sizes which is a great way to prevent upload of out dated information, and all these options can be combined for a better and robust Impact Report</p>
+<p>&nbsp;</p>
+<p><strong>Notes about the Current Version</strong></p>
+<p>There known bugs with this first release and I will fix everything on the next release and also release new features, for more information, please visit the&nbsp;<a title="Issue Tracker" href="https://dinodoc.codeplex.com/workitem/list/basic">Issue Tracker</a>&nbsp;section
+ on this page.</p>
+</div><div class="ClearBoth"></div>

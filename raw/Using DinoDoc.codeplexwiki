@@ -1,0 +1,1 @@
+this page will feature a little user manual for DinoDoc
